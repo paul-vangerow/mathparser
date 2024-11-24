@@ -2,6 +2,10 @@
 #include "tokenregex/tokenregex.hpp"
 
 int main(int argc, char* argv[]){
-    std::cout << "Hello world! " << value;
+    std::string basic_sequence = "(abc|de)f";
+    
+    auto sequenceConstruct = convertBasicTokenSequence(basic_sequence);
+    std::cout << sequenceConstruct;
+
     return 0;
 }
