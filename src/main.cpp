@@ -2,6 +2,6 @@
 #include "lexer/lexer.h"
 
 int main(int argc, char* argv[]){
-    LexerSequence("something", "ab(cde)");
+    LexerSequence("something", "ab*c");
     return 0;
 }

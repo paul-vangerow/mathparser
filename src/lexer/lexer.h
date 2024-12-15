@@ -34,6 +34,20 @@ public:
         for (auto item : values) addTransition(item, target);
     }
 
+    bool removeTransition(LexerNode* node, char key){
+        auto it = m_transitions.find(key);
+        if (it == m_transitions.end()) return false;
+        auto & vec = it->second;
+        for (auto vecIt = vec.begin(); vecIt != vec.end(); ++vecIt){
+            if (*vecIt == node) {
+                vec.erase(vecIt);
+                if (vec.size() == 0) m_transitions.erase(it);
+                return true;
+            }
+        }
+        return false;
+    }
+
     void printNode(){
         std::cout << "("<<nodeNum<<"): ";
         for (auto i : m_transitions){
@@ -100,6 +114,50 @@ public:
         allNodes.insert(newNode.entry);
         allNodes.insert(newNode.exit);
         return newNode;
+    }
+
+    NodeBlock popLast(){
+        auto & stackTop = nstack.top();
+        auto lastElement = stackTop.back();
+        stackTop.pop_back();
+
+        if (stackTop.size()) stackTop.back().exit->removeTransition(lastElement.entry, '.');
+        return lastElement;
+    }
+
+    void addOptRecursive(){
+        auto lastElement = popLast();
+
+        NodeBlock optBlock;
+        optBlock.entry->addTransition('.', lastElement.entry);
+        optBlock.entry->addTransition('.', optBlock.exit);
+
+        lastElement.exit->addTransition('.', optBlock.exit);
+        lastElement.exit->addTransition('.', lastElement.entry);
+        
+        addNode(optBlock);
+    }
+
+    void addRecursive(){
+        auto lastElement = popLast();
+
+        NodeBlock optBlock;
+        optBlock.entry->addTransition('.', lastElement.entry);
+        lastElement.exit->addTransition('.', optBlock.exit);
+        lastElement.exit->addTransition('.', lastElement.entry);
+        
+        addNode(optBlock);
+    }
+
+    void addOptional(){
+        auto lastElement = popLast();
+
+        NodeBlock optBlock;
+        optBlock.entry->addTransition('.', lastElement.entry);
+        optBlock.entry->addTransition('.', optBlock.exit);
+        lastElement.exit->addTransition('.', optBlock.exit);
+        
+        addNode(optBlock);
     }
 
     void addSymbol(char s){
