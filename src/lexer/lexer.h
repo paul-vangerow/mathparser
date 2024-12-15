@@ -6,6 +6,8 @@
 #include <unordered_set>
 #include <stack>
 
+// ---*--- LEXER NODE ---*--- //
+
 class LexerNode {
 private:
     std::unordered_map<char, std::vector<LexerNode*>> m_transitions;
@@ -28,6 +30,10 @@ public:
         else it->second.push_back(target);
     }
 
+    void addTransitions(std::unordered_set<char> values, LexerNode* target){
+        for (auto item : values) addTransition(item, target);
+    }
+
     void printNode(){
         std::cout << "("<<nodeNum<<"): ";
         for (auto i : m_transitions){
@@ -37,6 +43,8 @@ public:
         std::cout << "\n";
     }
 };
+
+// ---*--- NODE BLOCK ---*--- //
 
 class NodeBlock {
 public:
@@ -52,6 +60,8 @@ public:
     : entry(_entry)
     , exit(_exit) {}
 };
+
+// ---*--- NODE STACK ---*--- //
 
 class NodeStack {
 private:
@@ -98,12 +108,32 @@ public:
         addNode(symbolBlock);
     }
 
+    void addSet( std::string setString ){
+        std::unordered_set<char> characters;
+        for (int i = 0; i < setString.size(); i++){
+            if ( i+1 == setString.size() || setString[i+1] != '-' ) characters.insert(setString[i]);
+            else {
+                for (char c = setString[i]; c <= setString[i+2]; c++) characters.insert(c);
+                i += 2;
+            }
+        }
+        addSymbols(characters);
+    }
+
+    void addSymbols(std::unordered_set<char> s){
+        NodeBlock symbolBlock;
+        symbolBlock.entry->addTransitions(s, symbolBlock.exit);
+        addNode(symbolBlock);
+    }
+
     void printAllNodes(){
         for (auto item : allNodes){
             item->printNode();
         }
     }
 };
+
+// ---*--- LEXER SEQUENCE ---*--- //
 
 class LexerSequence {
 private:
@@ -112,6 +142,8 @@ private:
 public:
     LexerSequence(std::string token, std::string match);
 };
+
+// ---*--- LEXER ---*--- //
 
 class Lexer {
 private:
