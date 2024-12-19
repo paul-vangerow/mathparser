@@ -6,9 +6,9 @@ LexerSequence::LexerSequence(std::string token, std::string match)
     NodeStack mainStack;
     for (int i = 0; i < match.size(); i++){
         switch (match[i]){
-            case '|': {
-
-            } break;
+            case '|':
+                mainStack.addDiverge();
+                break;
             case '*': 
                 mainStack.addOptRecursive();
                 break;

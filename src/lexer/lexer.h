@@ -64,15 +64,22 @@ class NodeBlock {
 public:
     LexerNode* entry;
     LexerNode* exit;
+    bool divergent;
 
-    NodeBlock(){
-        exit = new LexerNode(true);
-        entry = new LexerNode();
-    }
+    NodeBlock()
+    : entry(new LexerNode())
+    , exit(new LexerNode(true))
+    , divergent(false){}
+
+    NodeBlock(bool div)
+    : entry(new LexerNode())
+    , exit(new LexerNode(true))
+    , divergent(div){}
 
     NodeBlock(LexerNode* _entry, LexerNode* _exit)
     : entry(_entry)
-    , exit(_exit) {}
+    , exit(_exit)
+    , divergent(false){}
 };
 
 // ---*--- NODE STACK ---*--- //
@@ -90,8 +97,19 @@ public:
         allNodes.insert(newNode.entry);
         allNodes.insert(newNode.exit);
         auto & top = nstack.top();
-        if (top.size()) top.back().exit->addTransition('.', newNode.entry);
-        top.push_back(newNode);
+        if (top.size()) {
+            auto & prevElement = top.back();
+            if (prevElement.divergent){
+                prevElement.entry->addTransition('.', newNode.entry);
+                newNode.exit->addTransition('.', prevElement.exit);
+                prevElement.divergent = false;
+            } else {
+                prevElement.exit->addTransition('.', newNode.entry);
+                top.push_back(newNode);
+            }
+        } else {
+            top.push_back(newNode);
+        }
     }
 
     void addOpen(){
@@ -100,6 +118,16 @@ public:
 
     void addClose(){
         addNode(reduce_stack());
+    }
+
+    void addDiverge(){
+        auto lastElement = popLast();
+
+        NodeBlock divBlock(true);
+        divBlock.entry->addTransition('.', lastElement.entry);
+        lastElement.exit->addTransition('.', divBlock.exit);
+
+        addNode(divBlock);
     }
 
     NodeBlock reduce_stack(){
