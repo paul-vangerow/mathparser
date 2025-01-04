@@ -6,17 +6,7 @@
 #include <unordered_set>
 #include <stack>
 
-#include "lexer/lexer_node.h"
-
-// ---*--- LEXER SEQUENCE ---*--- //
-
-class LexerSequence {
-private:
-    std::string m_token;
-    LexerNode* m_global_start;
-public:
-    LexerSequence(std::string token, std::string match);
-};
+#include "lexer/lexer_sequence.h"
 
 // ---*--- LEXER ---*--- //
 
