@@ -1,6 +1,8 @@
 #include "lexer/lexer_node.h"
 
-LexerNode::LexerNode(bool is_end) : m_is_end(is_end)
+LexerNode::LexerNode(bool is_end, bool divergence_target) 
+: m_is_end(is_end)
+, m_is_divergence_target(divergence_target)
 {
     static std::size_t nodeNumber = 0;
     m_node_number = nodeNumber++;
@@ -29,6 +31,30 @@ bool LexerNode::removeTransition(LexerNode* node, char key){
         }
     }
     return false;
+}
+
+void LexerNode::beginSimplifyTransitions(){
+    std::unordered_set<int> visited;
+    simplifyTransitions(visited);
+}
+
+void LexerNode::simplifyTransitions(std::unordered_set<int>& visited){
+    visited.insert(m_node_number);
+    if (m_transitions.size() == 1){
+        auto it = m_transitions.find('.');
+        if (it != m_transitions.end() && it->second.size() == 1 && !it->second.front()->m_is_divergence_target){
+            // Remove transition and merge nodes.
+            LexerNode* target = it->second.front();
+            m_transitions = target->m_transitions;
+            m_node_number = target->m_node_number;
+            m_is_end = target->m_is_end;
+            delete target;
+            // std::cout << "Transition ("<<m_node_number<<") -> ("<<target->m_node_number<<") is redundant\n";
+        }
+    }
+    for (auto i : m_transitions) for (auto j : i.second){
+        if ( visited.find(j->m_node_number) == visited.end() ) j->simplifyTransitions(visited);
+    }
 }
 
 void LexerNode::printInitial(){

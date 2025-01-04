@@ -27,5 +27,6 @@ LexerSequence::LexerSequence(std::string token, std::string match)
         }
     }
     m_global_start = mainStack.reduce_stack().entry;
+    m_global_start->beginSimplifyTransitions();
     m_global_start->printInitial();
 }
