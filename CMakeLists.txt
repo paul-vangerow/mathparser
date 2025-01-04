@@ -4,6 +4,8 @@ project(mathparser)
 add_executable(mathparser
     ./src/main.cpp
     ./src/lexer/lexer.cpp
+    ./src/lexer/lexer_node.cpp
+    ./src/lexer/node_stack.cpp
 )
 
 include_directories(mathparser
