@@ -38,6 +38,15 @@ LexerSequence::LexerSequence(LexerSequence & constr){
     reset();
 }
 
+void LexerSequence::match(char c){
+    std::queue<LexerNode*> new_iterators;
+    while(iterators.size()){
+        iterators.front()->match(c, new_iterators);
+        iterators.pop();
+    }
+    std::swap(iterators, new_iterators);
+}
+
 void LexerSequence::reset(){
     std::queue<LexerNode*> new_queue;
     new_queue.push(m_global_start);

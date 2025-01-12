@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include <iostream>
 #include <vector>
+#include <queue>
 
 // ---*--- LEXER NODE ---*--- //
 
@@ -20,6 +21,9 @@ public:
     void addTransition(char value, LexerNode* target);
     void addTransitions(std::unordered_set<char> values, LexerNode* target);
     bool removeTransition(LexerNode* node, char key);
+
+    void match(char c, std::queue<LexerNode*>& target);
+    bool is_end();
 
     void beginSimplifyTransitions();
     void simplifyTransitions(std::unordered_set<int>& visited);

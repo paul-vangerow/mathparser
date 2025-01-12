@@ -15,5 +15,6 @@ public:
     LexerSequence(std::string token, std::string match);
     LexerSequence(LexerSequence & constr);
     
+    void match(char c);
     void reset();
 };

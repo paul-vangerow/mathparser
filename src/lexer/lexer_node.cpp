@@ -33,6 +33,21 @@ bool LexerNode::removeTransition(LexerNode* node, char key){
     return false;
 }
 
+void LexerNode::match(char c, std::queue<LexerNode*>& target){
+    auto char_transitions = m_transitions.find(c);
+    auto epsilon_transitions = m_transitions.find('.');
+
+    // Get all connections based on the token provided
+    for (auto next : char_transitions->second ) target.push(next);
+
+    // Skip to all epsilon connections and immediately match from there.
+    for (auto skipto : epsilon_transitions->second ) skipto->match(c, target);
+}
+
+bool LexerNode::is_end(){
+    return m_is_end;
+}
+
 void LexerNode::beginSimplifyTransitions(){
     std::unordered_set<int> visited;
     simplifyTransitions(visited);
