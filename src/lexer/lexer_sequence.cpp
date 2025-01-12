@@ -29,4 +29,17 @@ LexerSequence::LexerSequence(std::string token, std::string match)
     m_global_start = mainStack.reduce_stack().entry;
     m_global_start->beginSimplifyTransitions();
     m_global_start->printInitial();
+    reset();
+}
+
+LexerSequence::LexerSequence(LexerSequence & constr){
+    m_token = constr.m_token;
+    m_global_start = constr.m_global_start;
+    reset();
+}
+
+void LexerSequence::reset(){
+    std::queue<LexerNode*> new_queue;
+    new_queue.push(m_global_start);
+    std::swap( iterators, new_queue );
 }
