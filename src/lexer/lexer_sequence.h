@@ -5,6 +5,11 @@
 
 // ---*--- LEXER SEQUENCE ---*--- //
 
+struct MatchResult {
+    bool is_end;
+    bool is_empty;
+};
+
 class LexerSequence {
 private:
     std::string m_token;
@@ -15,6 +20,7 @@ public:
     LexerSequence(std::string token, std::string match);
     LexerSequence(LexerSequence & constr);
     
-    void match(char c);
+    MatchResult match(char c);
     void reset();
+    std::string get_token();
 };

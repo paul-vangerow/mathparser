@@ -7,5 +7,11 @@ void Lexer::addSequence(std::string token, std::string match){
 std::vector<std::string> Lexer::match_sequence(std::string token_sequence){
     MatchLayerTopWrapper matcher(m_sequences);
 
+    for (auto token : token_sequence) { 
+        std::cout << "Matching " << token << " ";
+        int out = matcher.match(token);
+        assert(out == 0);
+    }
+
     return matcher.getTokens();
 }

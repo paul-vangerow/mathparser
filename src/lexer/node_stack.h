@@ -12,6 +12,7 @@ private:
     std::stack<std::vector<NodeBlock>> m_nstack;
 public:
     NodeStack();
+    ~NodeStack() = default;
 
     void addNode(NodeBlock newNode);
     void addOpen();

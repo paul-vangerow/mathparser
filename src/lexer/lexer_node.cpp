@@ -33,15 +33,21 @@ bool LexerNode::removeTransition(LexerNode* node, char key){
     return false;
 }
 
-void LexerNode::match(char c, std::queue<LexerNode*>& target){
-    auto char_transitions = m_transitions.find(c);
+void LexerNode::match(char c, std::queue<LexerNode*>& target, std::queue<LexerNode*>& current){
     auto epsilon_transitions = m_transitions.find('.');
 
-    // Get all connections based on the token provided
-    for (auto next : char_transitions->second ) target.push(next);
+    // Add All Epsilon transitions to those currently being considered. This ensures we 
+    // can take into account epsilon activated end nodes.
+    for (auto skipto : epsilon_transitions->second ) current.push(skipto);
 
-    // Skip to all epsilon connections and immediately match from there.
-    for (auto skipto : epsilon_transitions->second ) skipto->match(c, target);
+    std::unordered_set<LexerNode*> targetAdditions;
+    auto char_transitions = m_transitions.find(c);
+
+    // Get all connections based on the token provided
+    for (auto next : char_transitions->second ) targetAdditions.insert(next);
+
+    // Ensure we only add unique items (To prevent duplicated navigations)
+    for (auto item : targetAdditions) target.push(item);
 }
 
 bool LexerNode::is_end(){

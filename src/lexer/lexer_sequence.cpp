@@ -38,17 +38,35 @@ LexerSequence::LexerSequence(LexerSequence & constr){
     reset();
 }
 
-void LexerSequence::match(char c){
+MatchResult LexerSequence::match(char c){
     std::queue<LexerNode*> new_iterators;
+
+    MatchResult outval{};
     while(iterators.size()){
-        iterators.front()->match(c, new_iterators);
+        auto front_it = iterators.front();
         iterators.pop();
+
+        // If at least one node has ended (should only ever be one, comunicate that)
+        if (front_it->is_end()){
+            assert(!outval.is_end);
+            outval.is_end = true;
+        }
+
+        // Find all matching connections on the iterator.
+        front_it->match(c, new_iterators, iterators);
     }
     std::swap(iterators, new_iterators);
+    outval.is_empty = (iterators.size() != 0);
+    std::cout << "Match result: " << outval.is_empty << " " << outval.is_end << "\n";
+    return outval;
 }
 
 void LexerSequence::reset(){
     std::queue<LexerNode*> new_queue;
     new_queue.push(m_global_start);
     std::swap( iterators, new_queue );
+}
+
+std::string LexerSequence::get_token(){
+    return m_token;
 }
