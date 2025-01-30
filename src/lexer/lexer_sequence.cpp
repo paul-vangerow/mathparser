@@ -56,6 +56,7 @@ MatchResult LexerSequence::match(char c){
         front_it->match(c, new_iterators, iterators);
     }
     std::swap(iterators, new_iterators);
+
     outval.is_empty = (iterators.size() != 0);
     std::cout << "Match result: " << outval.is_empty << " " << outval.is_end << "\n";
     return outval;

@@ -17,9 +17,7 @@ public:
     PrimarySequences() = default;
 
     void addSequence(std::string token, std::string match){
-        std::cout << "Sequence Created \n";
         sequences.emplace_back( new LexerSequence(token, match) );
-        std::cout << "Sequence added \n";
     }
 
     std::vector<std::unique_ptr<LexerSequence>> make_copy(){
@@ -33,7 +31,7 @@ public:
 
 struct MatchLayer {
     // Reference LexerSequence to build new layers.
-    std::shared_ptr<PrimarySequences> original;
+    PrimarySequences & original;
 
     // Layer Sequences
     std::vector<std::unique_ptr<LexerSequence>> layer_seq;
@@ -42,11 +40,10 @@ struct MatchLayer {
     // Ref to next layer (allows cascade deletion)
     std::unique_ptr<MatchLayer> next;
 
-    MatchLayer(std::vector<std::string> starter_tokens, std::shared_ptr<PrimarySequences>& __original__){
-        original = __original__;
-        tokens = std::move(starter_tokens);
-
-        layer_seq = original->make_copy();
+    MatchLayer(std::vector<std::string> starter_tokens, PrimarySequences & __original__)
+    : original(__original__)
+    , tokens(std::move(starter_tokens)){
+        layer_seq = original.make_copy();
     }
 
     void match(char c){
@@ -94,13 +91,13 @@ struct MatchLayer {
 };
 
 struct MatchLayerTopWrapper {
+    PrimarySequences & original;
     std::unique_ptr<MatchLayer> top;
-    std::shared_ptr<PrimarySequences> original;
 
-    MatchLayerTopWrapper(std::shared_ptr<PrimarySequences>& __original__){
-        original = __original__;
-        top = std::make_unique<MatchLayer>(std::vector<std::string>{}, __original__);
-    }
+    MatchLayerTopWrapper(PrimarySequences & __original__)
+    : original(__original__)
+    , top( new MatchLayer(std::vector<std::string>{}, original) )
+    {}
 
     // There should always be a top layer.
     std::vector<std::string> getTokens(){
@@ -128,7 +125,7 @@ struct MatchLayerTopWrapper {
 
 class Lexer {
 private:
-    std::shared_ptr<PrimarySequences> m_sequences;
+    PrimarySequences m_sequences;
 public:
     Lexer() = default;
 

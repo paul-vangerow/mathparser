@@ -38,7 +38,9 @@ void LexerNode::match(char c, std::queue<LexerNode*>& target, std::queue<LexerNo
 
     // Add All Epsilon transitions to those currently being considered. This ensures we 
     // can take into account epsilon activated end nodes.
-    for (auto skipto : epsilon_transitions->second ) current.push(skipto);
+    if (epsilon_transitions != m_transitions.end()){
+        for (auto skipto : epsilon_transitions->second ) current.push(skipto);
+    }
 
     std::unordered_set<LexerNode*> targetAdditions;
     auto char_transitions = m_transitions.find(c);
