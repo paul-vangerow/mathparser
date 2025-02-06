@@ -22,7 +22,6 @@ public:
     void addTransitions(std::unordered_set<char> values, LexerNode* target);
     bool removeTransition(LexerNode* node, char key);
 
-    void match(char c, std::queue<LexerNode*>& target, std::queue<LexerNode*>& current);
     bool is_end();
 
     void beginSimplifyTransitions();

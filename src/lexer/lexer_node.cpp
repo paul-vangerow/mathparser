@@ -33,25 +33,6 @@ bool LexerNode::removeTransition(LexerNode* node, char key){
     return false;
 }
 
-void LexerNode::match(char c, std::queue<LexerNode*>& target, std::queue<LexerNode*>& current){
-    auto epsilon_transitions = m_transitions.find('.');
-
-    // Add All Epsilon transitions to those currently being considered. This ensures we 
-    // can take into account epsilon activated end nodes.
-    if (epsilon_transitions != m_transitions.end()){
-        for (auto skipto : epsilon_transitions->second ) current.push(skipto);
-    }
-
-    std::unordered_set<LexerNode*> targetAdditions;
-    auto char_transitions = m_transitions.find(c);
-
-    // Get all connections based on the token provided
-    for (auto next : char_transitions->second ) targetAdditions.insert(next);
-
-    // Ensure we only add unique items (To prevent duplicated navigations)
-    for (auto item : targetAdditions) target.push(item);
-}
-
 bool LexerNode::is_end(){
     return m_is_end;
 }
@@ -66,13 +47,11 @@ void LexerNode::simplifyTransitions(std::unordered_set<int>& visited){
     if (m_transitions.size() == 1){
         auto it = m_transitions.find('.');
         if (it != m_transitions.end() && it->second.size() == 1 && !it->second.front()->m_is_divergence_target){
-            // Remove transition and merge nodes.
             LexerNode* target = it->second.front();
             m_transitions = target->m_transitions;
             m_node_number = target->m_node_number;
             m_is_end = target->m_is_end;
             delete target;
-            // std::cout << "Transition ("<<m_node_number<<") -> ("<<target->m_node_number<<") is redundant\n";
         }
     }
     for (auto i : m_transitions) for (auto j : i.second){
