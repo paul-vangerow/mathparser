@@ -8,16 +8,17 @@ int main(int argc, char* argv[]){
     math_lexer.addSequence("NUM", "[0-9]+(.[0-9]+)?");
     math_lexer.addSequence("INT", "INT");
     math_lexer.addSequence("VAR", "[a-zA-Z]+");
-    math_lexer.addSequence("SPACE", " ");
     math_lexer.addSequence("EQ", "=");
     math_lexer.addSequence("DIV", "//");
     math_lexer.addSequence("MUL", "/*");
     math_lexer.addSequence("MINS", "-");
     math_lexer.addSequence("PLUS", "/+");
+    math_lexer.addSequence("WHITESPACE", "( |\n)");
 
-    std::vector<LexerToken> out = math_lexer.match_sequence("a+20=75");
+    std::vector<LexerToken> out = math_lexer.match_sequence("a+20=75 \n hello");
 
     for (auto item : out){
+        if (item.token_type == "WHITESPACE") continue;
         std::cout << item.token_content << " ";
     }
 
