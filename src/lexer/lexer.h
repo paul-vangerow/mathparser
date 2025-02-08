@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "lexer/lexer_sequence.h"
+#include "lexer/matcher.h"
 
 // ---*--- LEXER ---*--- //
 
@@ -19,6 +20,6 @@ public:
 
     void addSequence(std::string token, std::string match);
 
-    std::vector<std::string> match_sequence(std::string match_sequence);
+    std::vector<LexerToken> match_sequence(std::string match_sequence);
 };
 

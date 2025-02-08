@@ -1,10 +1,10 @@
 #include <iostream>
 #include "lexer/lexer.h"
+#include "lexer/matcher.h"
 
 int main(int argc, char* argv[]){
     Lexer math_lexer;
 
-    math_lexer.addSequence("NUM", "[0-9]+");
     math_lexer.addSequence("NUM", "[0-9]+(.[0-9]+)?");
     math_lexer.addSequence("INT", "INT");
     math_lexer.addSequence("VAR", "[a-zA-Z]+");
@@ -15,10 +15,10 @@ int main(int argc, char* argv[]){
     math_lexer.addSequence("MINS", "-");
     math_lexer.addSequence("PLUS", "/+");
 
-    auto out = math_lexer.match_sequence("20");
+    std::vector<LexerToken> out = math_lexer.match_sequence("a+20=75");
 
     for (auto item : out){
-        std::cout << item << " ";
+        std::cout << item.token_content << " ";
     }
 
     return 0;
