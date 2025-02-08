@@ -7,6 +7,7 @@ add_executable(mathparser
     ./src/lexer/lexer_node.cpp
     ./src/lexer/node_stack.cpp
     ./src/lexer/lexer_sequence.cpp
+    ./src/lexer/matcher.cpp
 )
 
 include_directories(mathparser

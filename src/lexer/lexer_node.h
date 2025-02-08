@@ -29,9 +29,6 @@ public:
 
     bool is_end();
 
-    void beginSimplifyTransitions();
-    void simplifyTransitions(std::unordered_set<int>& visited);
-
     std::vector<LexerNode*> match(char c);
     void handle_postiterators(MatchResult & result, std::queue<LexerNode*>& new_iterators);
     void handle_preiterators(std::queue<LexerNode*>& old_iterators);
