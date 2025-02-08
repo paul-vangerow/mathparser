@@ -13,10 +13,12 @@
 
 class Lexer {
 private:
-    std::vector<std::unique_ptr<LexerSequence>> m_sequences;
+    std::vector<LexerSequence> m_sequences;
 public:
     Lexer() = default;
 
     void addSequence(std::string token, std::string match);
+
+    std::vector<std::string> match_sequence(std::string match_sequence);
 };
 

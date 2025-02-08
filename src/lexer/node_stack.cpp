@@ -9,11 +9,11 @@ void NodeStack::addNode(NodeBlock newNode){
     if (top.size()) {
         auto & prevElement = top.back();
         if (prevElement.divergent){
-            prevElement.entry->addTransition('.', newNode.entry);
-            newNode.exit->addTransition('.', prevElement.exit);
+            prevElement.entry->addTransition('~', newNode.entry);
+            newNode.exit->addTransition('~', prevElement.exit);
             prevElement.divergent = false;
         } else {
-            prevElement.exit->addTransition('.', newNode.entry);
+            prevElement.exit->addTransition('~', newNode.entry);
             top.push_back(newNode);
         }
     } else {
@@ -33,8 +33,8 @@ void NodeStack::addDiverge(){
     auto lastElement = popLast();
 
     NodeBlock divBlock(true);
-    divBlock.entry->addTransition('.', lastElement.entry);
-    lastElement.exit->addTransition('.', divBlock.exit);
+    divBlock.entry->addTransition('~', lastElement.entry);
+    lastElement.exit->addTransition('~', divBlock.exit);
 
     addNode(divBlock);
 }
@@ -51,7 +51,7 @@ NodeBlock NodeStack::popLast(){
     auto lastElement = stackTop.back();
     stackTop.pop_back();
 
-    if (stackTop.size()) stackTop.back().exit->removeTransition(lastElement.entry, '.');
+    if (stackTop.size()) stackTop.back().exit->removeTransition(lastElement.entry, '~');
     return lastElement;
 }
 
@@ -59,11 +59,11 @@ void NodeStack::addOptRecursive(){
     auto lastElement = popLast();
 
     NodeBlock optBlock;
-    optBlock.entry->addTransition('.', lastElement.entry);
-    optBlock.entry->addTransition('.', optBlock.exit);
+    optBlock.entry->addTransition('~', lastElement.entry);
+    optBlock.entry->addTransition('~', optBlock.exit);
 
-    lastElement.exit->addTransition('.', optBlock.exit);
-    lastElement.exit->addTransition('.', lastElement.entry);
+    lastElement.exit->addTransition('~', optBlock.exit);
+    lastElement.exit->addTransition('~', lastElement.entry);
     
     addNode(optBlock);
 }
@@ -72,9 +72,9 @@ void NodeStack::addRecursive(){
     auto lastElement = popLast();
 
     NodeBlock optBlock;
-    optBlock.entry->addTransition('.', lastElement.entry);
-    lastElement.exit->addTransition('.', optBlock.exit);
-    lastElement.exit->addTransition('.', lastElement.entry);
+    optBlock.entry->addTransition('~', lastElement.entry);
+    lastElement.exit->addTransition('~', optBlock.exit);
+    lastElement.exit->addTransition('~', lastElement.entry);
     
     addNode(optBlock);
 }
@@ -83,9 +83,9 @@ void NodeStack::addOptional(){
     auto lastElement = popLast();
 
     NodeBlock optBlock;
-    optBlock.entry->addTransition('.', lastElement.entry);
-    optBlock.entry->addTransition('.', optBlock.exit);
-    lastElement.exit->addTransition('.', optBlock.exit);
+    optBlock.entry->addTransition('~', lastElement.entry);
+    optBlock.entry->addTransition('~', optBlock.exit);
+    lastElement.exit->addTransition('~', optBlock.exit);
     
     addNode(optBlock);
 }

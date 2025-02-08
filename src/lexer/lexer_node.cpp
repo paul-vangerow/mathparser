@@ -45,7 +45,7 @@ void LexerNode::beginSimplifyTransitions(){
 void LexerNode::simplifyTransitions(std::unordered_set<int>& visited){
     visited.insert(m_node_number);
     if (m_transitions.size() == 1){
-        auto it = m_transitions.find('.');
+        auto it = m_transitions.find('~');
         if (it != m_transitions.end() && it->second.size() == 1 && !it->second.front()->m_is_divergence_target){
             LexerNode* target = it->second.front();
             m_transitions = target->m_transitions;
@@ -59,12 +59,49 @@ void LexerNode::simplifyTransitions(std::unordered_set<int>& visited){
     }
 }
 
+std::vector<LexerNode*> LexerNode::match(char c){
+    auto it = m_transitions.find(c);
+    if (it != m_transitions.end()) return it->second;
+    else return std::vector<LexerNode*>{};
+}
+
+void LexerNode::handle_postiterators(MatchResult & result, std::queue<LexerNode*>& new_iterators){
+    result.is_end |= m_is_end;
+
+    auto epsilon_transitions = m_transitions.find('~');
+    bool empty = ( (m_transitions.size() == 0) || (m_transitions.size() == 1 && epsilon_transitions != m_transitions.end()) );
+
+    result.is_empty &= empty;
+    if (!empty){
+        new_iterators.push(this);
+    }
+    if (epsilon_transitions != m_transitions.end()){
+        for (auto item : epsilon_transitions->second){
+            item->handle_postiterators(result, new_iterators);
+        }
+    }
+}
+
+// This should usually not have to be invoked.
+void LexerNode::handle_preiterators(std::queue<LexerNode*>& old_iterators){
+    auto it = m_transitions.find('~');
+    if (it != m_transitions.end()){
+        for (auto item : it->second){
+            old_iterators.push(item);
+        }
+    }
+}
+
 void LexerNode::printInitial(){
     std::unordered_set<int> visited;
     std::cout << "Start: ";
     printNode(visited);
     std::cout << "\n";
     std::cout << "------- \n";
+}
+
+void LexerNode::printSingular(){
+    std::cout << "("<<m_node_number<<") ";
 }
 
 void LexerNode::printNode( std::unordered_set<int>& visited){
