@@ -106,7 +106,7 @@ void LexerNode::printSingular(){
 
 void LexerNode::printNode( std::unordered_set<int>& visited){
     visited.insert( m_node_number );
-    std::cout << "("<<m_node_number<<"): ";
+    std::cout << "("<<m_node_number<<") - {"<< m_is_divergence_target <<"}: ";
 
     std::vector<LexerNode*> connections;
     for (auto i : m_transitions){

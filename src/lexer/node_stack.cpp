@@ -58,7 +58,7 @@ NodeBlock NodeStack::popLast(){
 void NodeStack::addOptRecursive(){
     auto lastElement = popLast();
 
-    NodeBlock optBlock;
+    NodeBlock optBlock(true);
     optBlock.entry->addTransition('~', lastElement.entry);
     optBlock.entry->addTransition('~', optBlock.exit);
 
@@ -82,7 +82,7 @@ void NodeStack::addRecursive(){
 void NodeStack::addOptional(){
     auto lastElement = popLast();
 
-    NodeBlock optBlock;
+    NodeBlock optBlock(true);
     optBlock.entry->addTransition('~', lastElement.entry);
     optBlock.entry->addTransition('~', optBlock.exit);
     lastElement.exit->addTransition('~', optBlock.exit);
