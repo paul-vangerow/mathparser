@@ -8,11 +8,13 @@ add_executable(mathparser
     ./src/lexer/node_stack.cpp
     ./src/lexer/lexer_sequence.cpp
     ./src/lexer/matcher.cpp
+    ./src/parser/parser.cpp
 )
 
 include_directories(mathparser
     ./src/
     ./src/lexer
+    ./src/parser
 )
 
 set(CMAKE_BINARY_DIR "./build/")

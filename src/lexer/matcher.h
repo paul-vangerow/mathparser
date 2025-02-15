@@ -3,9 +3,44 @@
 #include <vector>
 #include <lexer/lexer_sequence.h>
 
-struct LexerToken {
+class LexerToken {
+protected:
     std::string token_type;
     std::string token_content;
+    std::vector<LexerToken> connections;
+public:
+    LexerToken()
+    : token_type("")
+    , token_content(""){}
+
+    LexerToken(std::string type, std::string content)
+    : token_type(type)
+    , token_content(content){}
+
+    LexerToken(std::string type)
+    : token_type(type)
+    , token_content("")
+    {
+    }
+
+    LexerToken(std::string type, std::vector<LexerToken> in)
+    : token_type(type)
+    , token_content(""){
+        // This shouldn't ever be called.
+        assert(false);
+    }
+
+    std::string get_type(){
+        return token_type;
+    }
+
+    std::vector<LexerToken>& get_connections(){
+        return connections;
+    }
+
+    void print(){
+        std::cout << token_content;
+    }
 };
 
 class Matcher {
@@ -24,7 +59,7 @@ class Matcher {
     std::vector<LexerSequence>& original;
     std::unique_ptr<MatchLayer> top;
 public:
-    std::unique_ptr<MatchLayer> construct_new_layer(std::vector<LexerToken> current_tokens, LexerToken matched_token = {});
+    std::unique_ptr<MatchLayer> construct_new_layer(std::vector<LexerToken> current_tokens, LexerToken matched_token = LexerToken());
 
     Matcher(std::vector<LexerSequence>& __original__);
 

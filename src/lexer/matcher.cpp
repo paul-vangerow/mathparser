@@ -10,7 +10,7 @@ Matcher::MatchLayer::MatchLayer(
 
 // Return how many sequences are left, if this number drops to 0
 // then the layer needs to be removed and replaced.
-int Matcher::MatchLayer:: match_token(char c){
+int Matcher::MatchLayer::match_token(char c){
     bool layer_created = false;
 
     active_content += c;
@@ -49,7 +49,7 @@ int Matcher::MatchLayer:: match_token(char c){
 }
 
 std::unique_ptr<Matcher::MatchLayer> Matcher::construct_new_layer(std::vector<LexerToken> current_tokens, LexerToken matched_token){
-    if (matched_token.token_type != ""){
+    if (matched_token.get_type() != ""){
         current_tokens.push_back(matched_token);
     }
     return std::make_unique<MatchLayer>(this, original, std::move(current_tokens));
