@@ -35,8 +35,8 @@ int main(int argc, char* argv[]){
         .add_rule<VariableToken>("VAR")
         .add_rule<AddExprToken>("EXPR ADD EXPR");
 
-    LexerToken ast_root = math_parser.parse_stream(out);
-    ast_root.print();
+    // LexerToken ast_root = math_parser.parse_stream(out);
+    // ast_root.print();
 
     return 0;
 }

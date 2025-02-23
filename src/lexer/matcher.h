@@ -23,13 +23,6 @@ public:
     {
     }
 
-    LexerToken(std::string type, std::vector<LexerToken> in)
-    : token_type(type)
-    , token_content(""){
-        // This shouldn't ever be called.
-        assert(false);
-    }
-
     std::string get_type(){
         return token_type;
     }

@@ -18,13 +18,6 @@ public:
         m_rules.push_back({match_sequence, [type_string = m_type](std::vector<LexerToken> in){return T(type_string, in);}});
         return *this;
     }
-
-    std::optional<LexerToken> match_token_list(std::string bare_token_list, std::vector<LexerToken> list){
-        for (auto rule : m_rules){
-            if (rule.match_sequence == bare_token_list) return rule.construction_rule(list);
-        }
-        return {};
-    }
 };
 
 class Parser {
@@ -39,9 +32,5 @@ public:
     ParserExpression & add_token(std::string token_type){
         tokenMap.emplace_back(token_type);
         return tokenMap.back();
-    }
-
-    LexerToken parse_stream(std::vector<LexerToken> stream){
-        return LexerToken();
     }
 };

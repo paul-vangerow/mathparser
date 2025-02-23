@@ -2,6 +2,9 @@
 
 #include "lexer/lexer.h"
 
+// All value components are stored in the BASE CLASS. Derived
+// class components here exist purely for the sake of readability.
+
 class NumericToken : public LexerToken {
 public:
     NumericToken(std::string type, std::vector<LexerToken> in) 
