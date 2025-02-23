@@ -13,27 +13,27 @@ int main(int argc, char* argv[]){
     math_lexer.addSequence("MINS", "-");
     math_lexer.addSequence("PLUS", "/+");
     math_lexer.addSequence("EOL", "(\n)+");
-    math_lexer.addSequence("", " +"); // Discard whitespace
+    math_lexer.addSequence("UNIMPLEMENTED", " +"); // Discard whitespace
 
     std::vector<LexerToken> out = math_lexer.match_sequence("a+20=75 \n b+40=20");
 
     for (auto item : out){
-        std::cout << item.get_type() << " ";
+        std::cout << item.type() << " ";
     }
 
-    Parser math_parser;
+    // Parser math_parser;
 
-    math_parser.add_token("EQUATION_SET")
-        .add_rule<EquationSet>("EQUATION_SET EOL EQUATION")
-        .add_rule<EquationSet>("EQUATION");
+    // math_parser.add_token("EQUATION_SET")
+    //     .add_rule<EquationSet>("EQUATION_SET EOL EQUATION")
+    //     .add_rule<EquationSet>("EQUATION");
 
-    math_parser.add_token("EQUATION")
-        .add_rule<EquationToken>("EXPR EQ EXPR");
+    // math_parser.add_token("EQUATION")
+    //     .add_rule<EquationToken>("EXPR EQ EXPR");
 
-    math_parser.add_token("EXPR")
-        .add_rule<NumericToken>("NUM")
-        .add_rule<VariableToken>("VAR")
-        .add_rule<AddExprToken>("EXPR ADD EXPR");
+    // math_parser.add_token("EXPR")
+    //     .add_rule<NumericToken>("NUM")
+    //     .add_rule<VariableToken>("VAR")
+    //     .add_rule<AddExprToken>("EXPR ADD EXPR");
 
     // LexerToken ast_root = math_parser.parse_stream(out);
     // ast_root.print();

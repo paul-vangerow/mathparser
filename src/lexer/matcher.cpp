@@ -49,7 +49,7 @@ int Matcher::MatchLayer::match_token(char c){
 }
 
 std::unique_ptr<Matcher::MatchLayer> Matcher::construct_new_layer(std::vector<LexerToken> current_tokens, LexerToken matched_token){
-    if (matched_token.get_type() != ""){
+    if (matched_token.type() != "UNIMPLEMENTED"){
         current_tokens.push_back(matched_token);
     }
     return std::make_unique<MatchLayer>(this, original, std::move(current_tokens));

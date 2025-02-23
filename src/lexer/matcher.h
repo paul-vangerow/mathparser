@@ -3,36 +3,42 @@
 #include <vector>
 #include <lexer/lexer_sequence.h>
 
-class LexerToken {
-protected:
-    std::string token_type;
-    std::string token_content;
-    std::vector<LexerToken> connections;
+class Token {
+private:
+    std::string dynamic_type;
 public:
-    LexerToken()
-    : token_type("")
-    , token_content(""){}
+    Token(std::string type) : dynamic_type(type) {}
+    virtual ~Token() = default;
+
+    std::string type(){
+        return dynamic_type;
+    }
+
+    virtual void print() {}
+};
+
+class LexerToken : public Token{
+private:
+    std::string m_content;
+public:
+    LexerToken() 
+    : Token("UNIMPLEMENTED")
+    , m_content("N/A"){}
 
     LexerToken(std::string type, std::string content)
-    : token_type(type)
-    , token_content(content){}
+    : Token(type)
+    , m_content(content){}
 
     LexerToken(std::string type)
-    : token_type(type)
-    , token_content("")
-    {
+    : Token(type)
+    , m_content("N/A") {}
+
+    std::string content(){
+        return m_content;
     }
 
-    std::string get_type(){
-        return token_type;
-    }
-
-    std::vector<LexerToken>& get_connections(){
-        return connections;
-    }
-
-    void print(){
-        std::cout << token_content;
+    void print() override {
+        std::cout << content();
     }
 };
 
