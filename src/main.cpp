@@ -15,10 +15,10 @@ int main(int argc, char* argv[]){
     math_lexer.addSequence("EOL", "(\n)+");
     math_lexer.addSequence("UNIMPLEMENTED", " +"); // Discard whitespace
 
-    std::vector<LexerToken> out = math_lexer.match_sequence("a+20=75 \n b+40=20");
+    std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence("a+20=75 \n b+40=20");
 
-    for (auto item : out){
-        std::cout << item.type() << " ";
+    for (auto& item : out){
+        std::cout << item->type() << " ";
     }
 
     // Parser math_parser;
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
     //     .add_rule<VariableToken>("VAR")
     //     .add_rule<AddExprToken>("EXPR ADD EXPR");
 
-    // LexerToken ast_root = math_parser.parse_stream(out);
+    // std::unique_ptr<LexerToken> ast_root = math_parser.parse_stream(out);
     // ast_root.print();
 
     return 0;

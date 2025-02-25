@@ -20,6 +20,6 @@ public:
 
     void addSequence(std::string token, std::string match);
 
-    std::vector<LexerToken> match_sequence(std::string match_sequence);
+    std::vector<std::unique_ptr<LexerToken>> match_sequence(std::string match_sequence);
 };
 

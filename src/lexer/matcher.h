@@ -20,6 +20,10 @@ public:
     : Token(type)
     , m_content("N/A") {}
 
+    LexerToken(std::unique_ptr<LexerToken>& v)
+    : Token(v->type())
+    , m_content(v->content()) {}
+
     std::string content(){
         return m_content;
     }
@@ -33,11 +37,11 @@ class Matcher {
     struct MatchLayer {
         Matcher * parent;
         std::vector<LexerSequence> active_sequences;
-        std::vector<LexerToken> current_tokens;
+        std::vector<std::unique_ptr<LexerToken>> current_tokens;
         std::string active_content;
         std::unique_ptr<MatchLayer> next;
 
-        MatchLayer(Matcher * __parent__, std::vector<LexerSequence> sequences, std::vector<LexerToken>&& tokens);
+        MatchLayer(Matcher * __parent__, std::vector<LexerSequence> sequences, std::vector<std::unique_ptr<LexerToken>>&& tokens);
 
         int match_token(char c);
     };
@@ -45,11 +49,12 @@ class Matcher {
     std::vector<LexerSequence>& original;
     std::unique_ptr<MatchLayer> top;
 public:
-    std::unique_ptr<MatchLayer> construct_new_layer(std::vector<LexerToken> current_tokens, LexerToken matched_token = LexerToken());
+    std::unique_ptr<MatchLayer> construct_new_layer(std::vector<std::unique_ptr<LexerToken>>& current_tokens, std::unique_ptr<LexerToken> matched_token);
+    std::unique_ptr<MatchLayer> construct_new_layer();
 
     Matcher(std::vector<LexerSequence>& __original__);
 
     void match_token(char c);
 
-    std::vector<LexerToken> get_tokens();
+    std::vector<std::unique_ptr<LexerToken>> get_tokens();
 };

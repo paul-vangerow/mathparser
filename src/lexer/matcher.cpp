@@ -3,10 +3,10 @@
 Matcher::MatchLayer::MatchLayer(
     Matcher * __parent__, 
     std::vector<LexerSequence> sequences, 
-    std::vector<LexerToken>&& tokens)
+    std::vector<std::unique_ptr<LexerToken>>&& tokens)
 : parent(__parent__)
 , active_sequences(sequences)
-, current_tokens(tokens){}
+, current_tokens(std::move(tokens)){}
 
 // Return how many sequences are left, if this number drops to 0
 // then the layer needs to be removed and replaced.
@@ -22,7 +22,7 @@ int Matcher::MatchLayer::match_token(char c){
         // Create a new layer (replace all existing layers) and destroy all subsequent sequences.
         if (res.is_end) {
             layer_created = true;
-            next = parent->construct_new_layer(current_tokens, LexerToken{seq_it->get_token(), active_content});
+            next = parent->construct_new_layer(current_tokens, std::make_unique<LexerToken>(seq_it->get_token(), active_content));
             active_sequences.erase(std::next(seq_it), active_sequences.end());
         }
         // Destroy current sequence.
@@ -48,16 +48,27 @@ int Matcher::MatchLayer::match_token(char c){
     return active_sequences.size();
 }
 
-std::unique_ptr<Matcher::MatchLayer> Matcher::construct_new_layer(std::vector<LexerToken> current_tokens, LexerToken matched_token){
-    if (matched_token.type() != "UNIMPLEMENTED"){
-        current_tokens.push_back(matched_token);
+std::unique_ptr<Matcher::MatchLayer> Matcher::construct_new_layer(std::vector<std::unique_ptr<LexerToken>>& current_tokens, std::unique_ptr<LexerToken> matched_token){
+    std::vector<std::unique_ptr<LexerToken>> new_tokens;
+    for (auto& item : current_tokens){
+        new_tokens.emplace_back(new LexerToken(item));
     }
-    return std::make_unique<MatchLayer>(this, original, std::move(current_tokens));
+    if (matched_token->type() != "UNIMPLEMENTED"){
+        new_tokens.push_back(std::move(matched_token));
+    }
+    return std::make_unique<MatchLayer>(this, original, std::move(new_tokens));
+}
+
+std::unique_ptr<Matcher::MatchLayer> Matcher::construct_new_layer(){
+    std::vector<std::unique_ptr<LexerToken>> empty_tokens;
+    std::unique_ptr<LexerToken> fill_token = std::make_unique<LexerToken>();
+
+    return construct_new_layer(empty_tokens, std::move(fill_token));
 }
 
 // Initialise by creating first layer.
 Matcher::Matcher(std::vector<LexerSequence>& __original__) : original(__original__) {
-    top = construct_new_layer(std::vector<LexerToken>{});
+    top = construct_new_layer();
 }
 
 // Change signature to have an error type in case nothing can be matched?
@@ -69,12 +80,12 @@ void Matcher::match_token(char c){
             top = std::move(tmp);
         } else {
             // Throw error (this means NOTHING could match)
-            top = construct_new_layer(std::vector<LexerToken>{});
+            top = construct_new_layer();
         }
     }
 }
 
-std::vector<LexerToken> Matcher::get_tokens(){
-    if (top->next) return top->next->current_tokens;
-    else return top->current_tokens;
+std::vector<std::unique_ptr<LexerToken>> Matcher::get_tokens(){
+    if (top->next) return std::move(top->next->current_tokens);
+    else return std::move(top->current_tokens);
 }
