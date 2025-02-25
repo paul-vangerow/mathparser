@@ -1,6 +1,21 @@
 #pragma once
 
-#include "lexer/lexer.h"
+#include <iostream>
+
+class Token {
+private:
+    std::string dynamic_type;
+public:
+    Token() = default;
+    Token(std::string type) : dynamic_type(type) {}
+    virtual ~Token() = default;
+
+    std::string type(){
+        return dynamic_type;
+    }
+
+    virtual void print() {}
+};
 
 // All value components are stored in the BASE CLASS. Derived
 // class components here exist purely for the sake of readability.

@@ -2,20 +2,7 @@
 
 #include <vector>
 #include <lexer/lexer_sequence.h>
-
-class Token {
-private:
-    std::string dynamic_type;
-public:
-    Token(std::string type) : dynamic_type(type) {}
-    virtual ~Token() = default;
-
-    std::string type(){
-        return dynamic_type;
-    }
-
-    virtual void print() {}
-};
+#include <parser/tokens.h>
 
 class LexerToken : public Token{
 private:

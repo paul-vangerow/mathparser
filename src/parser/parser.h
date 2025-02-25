@@ -1,11 +1,12 @@
 #pragma once
 
 #include "parser/tokens.h"
+#include <vector>
 
 class ParserExpression {
     struct ParseRule {
         std::string match_sequence;
-        std::function<LexerToken(std::vector<LexerToken>)> construction_rule;
+        std::function<Token(std::vector<Token>)> construction_rule;
     };
 
     std::string m_type;
@@ -15,13 +16,13 @@ public:
 
     template <typename T>
     ParserExpression & add_rule(std::string match_sequence){
-        m_rules.push_back({match_sequence, [type_string = m_type](std::vector<LexerToken> in){return T(type_string, in);}});
+        m_rules.push_back({match_sequence, [type_string = m_type](std::vector<Token> in){return T(type_string, in);}});
         return *this;
     }
 };
 
 class Parser {
-    LexerToken root;
+    Token root;
 
     // Store a map of ParserExpressions to make tokens of the given types.
     std::vector<ParserExpression> tokenMap;
