@@ -21,19 +21,19 @@ int main(int argc, char* argv[]){
         std::cout << item->type() << " ";
     }
 
-    // Parser math_parser;
+    Parser math_parser;
 
-    // math_parser.add_token("EQUATION_SET")
-    //     .add_rule<EquationSet>("EQUATION_SET EOL EQUATION")
-    //     .add_rule<EquationSet>("EQUATION");
+    math_parser.add_token("EQUATION_SET")
+        .add_rule<EquationSet>("EQUATION_SET EOL EQUATION")
+        .add_rule<EquationSet>("EQUATION");
 
-    // math_parser.add_token("EQUATION")
-    //     .add_rule<EquationToken>("EXPR EQ EXPR");
+    math_parser.add_token("EQUATION")
+        .add_rule<EquationToken>("EXPR EQ EXPR");
 
-    // math_parser.add_token("EXPR")
-    //     .add_rule<NumericToken>("NUM")
-    //     .add_rule<VariableToken>("VAR")
-    //     .add_rule<AddExprToken>("EXPR ADD EXPR");
+    math_parser.add_token("EXPR")
+        .add_rule<NumericToken>("NUM")
+        .add_rule<VariableToken>("VAR")
+        .add_rule<AddExprToken>("EXPR ADD EXPR");
 
     // std::unique_ptr<LexerToken> ast_root = math_parser.parse_stream(out);
     // ast_root.print();

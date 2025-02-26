@@ -6,7 +6,7 @@
 class ParserExpression {
     struct ParseRule {
         std::string match_sequence;
-        std::function<Token(std::vector<Token>)> construction_rule;
+        std::function<Token(std::vector<std::unique_ptr<Token>>)> construction_rule;
     };
 
     std::string m_type;
@@ -16,7 +16,7 @@ public:
 
     template <typename T>
     ParserExpression & add_rule(std::string match_sequence){
-        m_rules.push_back({match_sequence, [type_string = m_type](std::vector<Token> in){return T(type_string, in);}});
+        m_rules.push_back({match_sequence, [type_string = m_type](std::vector<std::unique_ptr<Token>>&& in){return T(type_string, std::move(in));}});
         return *this;
     }
 };
