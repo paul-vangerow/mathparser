@@ -1,6 +1,7 @@
 #include <iostream>
 #include "lexer/lexer.h"
 #include "parser/parser.h"
+#include <vector>
 
 int main(int argc, char* argv[]){
     Lexer math_lexer;
@@ -20,11 +21,12 @@ int main(int argc, char* argv[]){
     for (auto& item : out){
         std::cout << item->type() << " ";
     }
+    std::cout << "\n";
 
     Parser math_parser;
 
     math_parser.add_token("EQUATION_SET")
-        .add_rule<EquationSet>("EQUATION_SET EOL EQUATION")
+        .add_rule<EquationSet>("EQUATION_SET EOL EQUATION_SET")
         .add_rule<EquationSet>("EQUATION");
 
     math_parser.add_token("EQUATION")
@@ -33,10 +35,10 @@ int main(int argc, char* argv[]){
     math_parser.add_token("EXPR")
         .add_rule<NumericToken>("NUM")
         .add_rule<VariableToken>("VAR")
-        .add_rule<AddExprToken>("EXPR ADD EXPR");
+        .add_rule<AddExprToken>("EXPR PLUS EXPR");
 
-    // std::unique_ptr<LexerToken> ast_root = math_parser.parse_stream(out);
-    // ast_root.print();
+    std::unique_ptr<Token> ast_root = math_parser.parse_stream(std::move(out));
+    ast_root->print();
 
     return 0;
 }

@@ -8,8 +8,13 @@ private:
     std::string dynamic_type;
 public:
     Token() = default;
+    Token(Token&& other) : dynamic_type(other.type()){};
     Token(std::string type) : dynamic_type(type) {}
+    
     virtual ~Token() = default;
+    void operator=(Token&& other){
+        dynamic_type = other.type();
+    }
 
     std::string type(){
         return dynamic_type;
@@ -105,30 +110,32 @@ public:
 
 class EquationSet : public Token {
 private:
-    std::unique_ptr<Token> equation_set;
-    std::unique_ptr<Token> equation;
+    std::unique_ptr<Token> equation_set1;
+    std::unique_ptr<Token> equation_set2;
 public:
     EquationSet(std::string type, std::vector<std::unique_ptr<Token>> in) 
     : Token(type)
     {
         if (in.size() == 1){
             assert(in[0]->type() == "EQUATION");
-            equation = std::move(in[0]);
+            equation_set1 = std::move(in[0]);
         } else {
             assert(in.size() == 3);
             assert(in[0]->type() == "EQUATION_SET");
             assert(in[1]->type() == "EOL");
-            assert(in[2]->type() == "EQUATION");
-            equation_set = std::move(in[0]);
-            equation = std::move(in[2]);
+            assert(in[2]->type() == "EQUATION_SET");
+            equation_set1 = std::move(in[0]);
+            equation_set2 = std::move(in[2]);
         }
     }
 
     void print(){
-        if (equation_set){
-            equation_set->print();
+        if (equation_set2){
+            equation_set1->print();
             std::cout << "\n";
+            equation_set2->print();
+        } else {
+            equation_set1->print();
         }
-        equation->print();
     }
 };

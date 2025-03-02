@@ -62,7 +62,7 @@ std::unique_ptr<Matcher::MatchLayer> Matcher::construct_new_layer(std::vector<st
 std::unique_ptr<Matcher::MatchLayer> Matcher::construct_new_layer(){
     std::vector<std::unique_ptr<LexerToken>> empty_tokens;
     std::unique_ptr<LexerToken> fill_token = std::make_unique<LexerToken>();
-
+    
     return construct_new_layer(empty_tokens, std::move(fill_token));
 }
 
