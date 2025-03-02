@@ -18,4 +18,4 @@ include_directories(mathparser
 )
 
 set(CMAKE_BINARY_DIR "./build/")
-set(CMAKE_CXX_FLAGS "-std=c++17 -pedantic -Wall -Wextra -Wconversion -O0")
+set(CMAKE_CXX_FLAGS "-std=c++17 -pedantic -Wall -Wextra -O0")

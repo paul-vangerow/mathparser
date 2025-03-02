@@ -63,7 +63,7 @@ public:
         for (std::size_t i = size() - n; i < size(); i++){
             out.push_back(std::move(stack[i]));
         }
-        stack.erase(stack.begin() + size() - n, stack.end());
+        stack.erase( stack.begin() + (size() - n), stack.end());
         return out;
     }
 

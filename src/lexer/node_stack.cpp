@@ -104,7 +104,7 @@ void NodeStack::addSymbols(std::unordered_set<char> s){
 
 void NodeStack::addSet(std::string setString){
     std::unordered_set<char> characters;
-    for (int i = 0; i < setString.size(); i++){
+    for (std::size_t i = 0; i < setString.size(); i++){
         if ( i+1 == setString.size() || setString[i+1] != '-' ) characters.insert(setString[i]);
         else {
             for (char c = setString[i]; c <= setString[i+2]; c++) characters.insert(c);
