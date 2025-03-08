@@ -11,12 +11,12 @@ int main(int argc, char* argv[]){
     math_lexer.addSequence("EQ", "=");
     math_lexer.addSequence("DIV", "//");
     math_lexer.addSequence("MUL", "/*");
-    math_lexer.addSequence("MINS", "-");
-    math_lexer.addSequence("PLUS", "/+");
+    math_lexer.addSequence("SUB", "-");
+    math_lexer.addSequence("ADD", "/+");
     math_lexer.addSequence("EOL", "(\n)+");
-    math_lexer.addSequence("UNIMPLEMENTED", " +"); // Discard whitespace
+    math_lexer.addSequence("UNIMPLEMENTED", " +");
 
-    std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence("a+20=75 \n b+40=20");
+    std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence("2a + b + c = 21 \n a + b + c = 14 \n a + 4b - 2c = 23");
 
     for (auto& item : out){
         std::cout << item->type() << " ";
@@ -35,7 +35,10 @@ int main(int argc, char* argv[]){
     math_parser.add_token("EXPR")
         .add_rule<NumericToken>("NUM")
         .add_rule<VariableToken>("VAR")
-        .add_rule<AddExprToken>("EXPR PLUS EXPR");
+        .add_rule<MulExprToken>("EXPR EXPR")
+        .add_rule<MulExprToken>("EXPR MUL EXPR")
+        .add_rule<AddExprToken>("EXPR ADD EXPR")
+        .add_rule<SubExprToken>("EXPR SUB EXPR");
 
     std::unique_ptr<Token> ast_root = math_parser.parse_stream(std::move(out));
     ast_root->print();

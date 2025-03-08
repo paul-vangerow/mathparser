@@ -1,5 +1,4 @@
 #include "lexer/lexer_sequence.h"
-#include "lexer/node_stack.h"
 
 LexerSequence::LexerSequence(std::string token, std::string match) 
 : m_token(token)

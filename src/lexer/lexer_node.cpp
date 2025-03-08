@@ -1,8 +1,7 @@
 #include "lexer/lexer_node.h"
 
-LexerNode::LexerNode(bool is_end, bool divergence_target) 
+LexerNode::LexerNode(bool is_end) 
 : m_is_end(is_end)
-, m_is_divergence_target(divergence_target)
 {
     static std::size_t nodeNumber = 0;
     m_node_number = nodeNumber++;
@@ -84,7 +83,7 @@ void LexerNode::printSingular(){
 
 void LexerNode::printNode( std::unordered_set<int>& visited){
     visited.insert( m_node_number );
-    std::cout << "("<<m_node_number<<") - {"<< m_is_divergence_target <<"}: ";
+    std::cout << "("<<m_node_number<<") ";
 
     std::vector<LexerNode*> connections;
     for (auto i : m_transitions){

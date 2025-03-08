@@ -1,5 +1,4 @@
 #include "lexer/lexer.h"
-#include "lexer/matcher.h"
 
 void Lexer::addSequence(std::string token, std::string match){
     m_sequences.emplace_back(token, match);

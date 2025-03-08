@@ -3,6 +3,9 @@
 #include <iostream>
 #include <vector>
 
+// This file contains all the Token definitions to be
+// assembled into an AST by the parser.
+
 class Token {
 private:
     std::string dynamic_type;
@@ -23,8 +26,36 @@ public:
     virtual void print() {}
 };
 
-// All value components are stored in the BASE CLASS. Derived
-// class components here exist purely for the sake of readability.
+class LexerToken : public Token{
+private:
+    std::string m_content;
+public:
+    LexerToken(LexerToken&& other) : Token(other.type()), m_content(other.content()) {}
+
+    LexerToken() 
+    : Token("UNIMPLEMENTED")
+    , m_content("N/A"){}
+
+    LexerToken(std::string type, std::string content)
+    : Token(type)
+    , m_content(content){}
+
+    LexerToken(std::string type)
+    : Token(type)
+    , m_content("N/A") {}
+
+    LexerToken(std::unique_ptr<LexerToken>& v)
+    : Token(v->type())
+    , m_content(v->content()) {}
+
+    std::string content(){
+        return m_content;
+    }
+
+    void print() override {
+        std::cout << content();
+    }
+};
 
 class NumericToken : public Token {
 private:
@@ -74,7 +105,7 @@ public:
     {
         assert(in.size() == 3);
         assert(in[0]->type() == "EXPR");
-        assert(in[1]->type() == "PLUS");
+        assert(in[1]->type() == "ADD");
         assert(in[2]->type() == "EXPR");
         expr1 = std::move(in[0]);
         expr2 = std::move(in[2]);
@@ -82,6 +113,57 @@ public:
     void print(){
         expr1->print();
         std::cout << " + ";
+        expr2->print();
+    }
+};
+
+class SubExprToken : public Token {
+private:
+    std::unique_ptr<Token> expr1;
+    std::unique_ptr<Token> expr2;
+public:
+    SubExprToken(std::string type, std::vector<std::unique_ptr<Token>> in) 
+    : Token(type)
+    {
+        assert(in.size() == 3);
+        assert(in[0]->type() == "EXPR");
+        assert(in[1]->type() == "SUB");
+        assert(in[2]->type() == "EXPR");
+        expr1 = std::move(in[0]);
+        expr2 = std::move(in[2]);
+    }
+    void print(){
+        expr1->print();
+        std::cout << " - ";
+        expr2->print();
+    }
+};
+
+class MulExprToken : public Token {
+private:
+    std::unique_ptr<Token> expr1;
+    std::unique_ptr<Token> expr2;
+public:
+    MulExprToken(std::string type, std::vector<std::unique_ptr<Token>> in) 
+    : Token(type)
+    {
+        if (in.size() == 2){
+            assert(in[0]->type() == "EXPR");
+            assert(in[1]->type() == "EXPR");
+            expr1 = std::move(in[0]);
+            expr2 = std::move(in[1]);
+        } else {
+            assert(in.size() == 3);
+            assert(in[0]->type() == "EXPR");
+            assert(in[1]->type() == "MUL");
+            assert(in[2]->type() == "EXPR");
+            expr1 = std::move(in[0]);
+            expr2 = std::move(in[2]);
+        }
+    }
+    void print(){
+        expr1->print();
+        std::cout << " * ";
         expr2->print();
     }
 };
