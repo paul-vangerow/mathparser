@@ -41,7 +41,8 @@ int main(int argc, char* argv[]){
         .add_rule<SubExprToken>("EXPR SUB EXPR");
 
     std::unique_ptr<Token> ast_root = math_parser.parse_stream(std::move(out));
-    ast_root->print();
+    math_parser.print_as_tree(ast_root.get());
+    // ast_root->print();
 
     return 0;
 }

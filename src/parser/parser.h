@@ -7,6 +7,7 @@
 #include <vector>
 #include <optional>
 #include <cassert>
+#include <queue>
 
 // ------------------------- Parser ---------------------- //
 //                                                         //
@@ -45,4 +46,9 @@ public:
     //
     // return: The root of the AST
     std::unique_ptr<Token> parse_stream(std::vector<std::unique_ptr<LexerToken>>&& token_stream);
+
+    // Debug functions for printing out the tree (for visual inspection purposes)
+    std::size_t get_max_depth(Token* root);
+    std::size_t navigate_layers(Token* root, std::size_t depth, std::size_t min_width, std::vector<std::string>& layer_strings);
+    void print_as_tree(Token* root);
 };

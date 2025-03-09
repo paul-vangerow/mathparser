@@ -23,6 +23,7 @@ public:
         return dynamic_type;
     }
 
+    virtual std::vector<Token*> get() { return std::vector<Token*>{}; }
     virtual void print() {}
 };
 
@@ -69,10 +70,14 @@ public:
         value = std::move(in[0]);
     }
 
-    void print(){
+    void print() override {
         std::cout << "NUM {";
         value->print();
         std::cout << "}";
+    }
+
+    std::vector<Token*> get() override { 
+        return std::vector<Token*>{value.get()}; 
     }
 };
 
@@ -88,10 +93,14 @@ public:
         value = std::move(in[0]);
     }
 
-    void print(){
+    void print() override {
         std::cout << "VAR {";
         value->print();
         std::cout << "}";
+    }
+
+    std::vector<Token*> get() override { 
+        return std::vector<Token*>{value.get()}; 
     }
 };
 
@@ -110,10 +119,14 @@ public:
         expr1 = std::move(in[0]);
         expr2 = std::move(in[2]);
     }
-    void print(){
+    void print() override {
         expr1->print();
         std::cout << " + ";
         expr2->print();
+    }
+
+    std::vector<Token*> get() override { 
+        return std::vector<Token*>{expr1.get(), expr2.get()}; 
     }
 };
 
@@ -132,10 +145,14 @@ public:
         expr1 = std::move(in[0]);
         expr2 = std::move(in[2]);
     }
-    void print(){
+    void print() override {
         expr1->print();
         std::cout << " - ";
         expr2->print();
+    }
+
+    std::vector<Token*> get() override { 
+        return std::vector<Token*>{expr1.get(), expr2.get()}; 
     }
 };
 
@@ -161,10 +178,15 @@ public:
             expr2 = std::move(in[2]);
         }
     }
-    void print(){
+
+    void print() override {
         expr1->print();
         std::cout << " * ";
         expr2->print();
+    }
+
+    std::vector<Token*> get() override { 
+        return std::vector<Token*>{expr1.get(), expr2.get()}; 
     }
 };
 
@@ -183,10 +205,15 @@ public:
         expr1 = std::move(in[0]);
         expr2 = std::move(in[2]);
     }
-    void print(){
+
+    void print() override {
         expr1->print();
         std::cout << " = ";
         expr2->print();
+    }
+
+    std::vector<Token*> get() override { 
+        return std::vector<Token*>{expr1.get(), expr2.get()}; 
     }
 };
 
@@ -211,13 +238,21 @@ public:
         }
     }
 
-    void print(){
+    void print() override {
         if (equation_set2){
             equation_set1->print();
             std::cout << "\n";
             equation_set2->print();
         } else {
             equation_set1->print();
+        }
+    }
+
+    std::vector<Token*> get() override {
+        if (equation_set2){
+            return std::vector<Token*>{equation_set1.get(), equation_set2.get()}; 
+        } else {
+            return std::vector<Token*>{equation_set1.get()}; 
         }
     }
 };
