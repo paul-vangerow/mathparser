@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <ostream>
 
 // This file contains all the Token definitions to be
 // assembled into an AST by the parser.
@@ -24,7 +25,9 @@ public:
     }
 
     virtual std::vector<Token*> get() { return std::vector<Token*>{}; }
-    virtual void print() {}
+    virtual void print(std::ostream& stream) {
+        (void)stream;
+    }
 };
 
 class LexerToken : public Token{
@@ -53,8 +56,8 @@ public:
         return m_content;
     }
 
-    void print() override {
-        std::cout << content();
+    void print(std::ostream& stream) override {
+        stream << content();
     }
 };
 
@@ -70,10 +73,10 @@ public:
         value = std::move(in[0]);
     }
 
-    void print() override {
-        std::cout << "NUM {";
-        value->print();
-        std::cout << "}";
+    void print(std::ostream& stream) override {
+        stream << "NUM {";
+        value->print(stream);
+        stream << "}";
     }
 
     std::vector<Token*> get() override { 
@@ -93,10 +96,10 @@ public:
         value = std::move(in[0]);
     }
 
-    void print() override {
-        std::cout << "VAR {";
-        value->print();
-        std::cout << "}";
+    void print(std::ostream& stream) override {
+        stream << "VAR {";
+        value->print(stream);
+        stream << "}";
     }
 
     std::vector<Token*> get() override { 
@@ -119,10 +122,10 @@ public:
         expr1 = std::move(in[0]);
         expr2 = std::move(in[2]);
     }
-    void print() override {
-        expr1->print();
-        std::cout << " + ";
-        expr2->print();
+    void print(std::ostream& stream) override {
+        expr1->print(stream);
+        stream << " + ";
+        expr2->print(stream);
     }
 
     std::vector<Token*> get() override { 
@@ -145,10 +148,10 @@ public:
         expr1 = std::move(in[0]);
         expr2 = std::move(in[2]);
     }
-    void print() override {
-        expr1->print();
-        std::cout << " - ";
-        expr2->print();
+    void print(std::ostream& stream) override {
+        expr1->print(stream);
+        stream << " - ";
+        expr2->print(stream);
     }
 
     std::vector<Token*> get() override { 
@@ -179,10 +182,10 @@ public:
         }
     }
 
-    void print() override {
-        expr1->print();
-        std::cout << " * ";
-        expr2->print();
+    void print(std::ostream& stream) override {
+        expr1->print(stream);
+        stream << " * ";
+        expr2->print(stream);
     }
 
     std::vector<Token*> get() override { 
@@ -206,10 +209,10 @@ public:
         expr2 = std::move(in[2]);
     }
 
-    void print() override {
-        expr1->print();
-        std::cout << " = ";
-        expr2->print();
+    void print(std::ostream& stream) override {
+        expr1->print(stream);
+        stream << " = ";
+        expr2->print(stream);
     }
 
     std::vector<Token*> get() override { 
@@ -238,13 +241,13 @@ public:
         }
     }
 
-    void print() override {
+    void print(std::ostream& stream) override {
         if (equation_set2){
-            equation_set1->print();
-            std::cout << "\n";
-            equation_set2->print();
+            equation_set1->print(stream);
+            stream << "\n";
+            equation_set2->print(stream);
         } else {
-            equation_set1->print();
+            equation_set1->print(stream);
         }
     }
 
