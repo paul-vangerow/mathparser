@@ -26,6 +26,7 @@ public:
 
     virtual std::vector<Token*> get() { return std::vector<Token*>{}; }
     virtual void print(std::ostream& stream) {
+        std::cout << "base";
         (void)stream;
     }
 };

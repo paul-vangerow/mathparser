@@ -11,12 +11,14 @@ add_executable(mathparser
     ./src/parser/parser.cpp
     ./src/parser/parse_stack.cpp
     ./src/parser/parser_expression.cpp
+    ./src/arg_parser/arg_parser.cpp
 )
 
 include_directories(mathparser
     ./src/
     ./src/lexer
     ./src/parser
+    ./src/arg_parser
 )
 
 set(CMAKE_BINARY_DIR "./build/")

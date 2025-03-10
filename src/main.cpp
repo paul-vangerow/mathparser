@@ -17,7 +17,16 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    std::cout << arg_parse["input_path"] << " " << arg_parse["output_path"] << "\n";
+    std::string input_sequence = arg_parse.get_input_stream(arg_parse["input_path"]);
+
+    if (input_sequence.size() == 0) return 1;
+
+    std::unique_ptr<std::ofstream> output_stream;;
+
+    if (arg_parse["output_path"].size()){
+        output_stream = arg_parse.get_output_stream(arg_parse["output_path"]);
+        if (output_stream == nullptr) return 1;
+    }
 
     Lexer math_lexer;
 
@@ -52,7 +61,8 @@ int main(int argc, char* argv[]){
 
     // Actually do the parsing and lexing //
 
-    std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence("2a + b + c = 21 \n a + b + c = 14 \n a + 4b - 2c = 23");
+    std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence(input_sequence);
+    // std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence("2a + b + c = 21 \n a + b + c = 14 \n a + 4b - 2c = 23");
 
     for (auto& item : out){
         std::cout << item->type() << " ";
@@ -61,7 +71,12 @@ int main(int argc, char* argv[]){
 
     std::unique_ptr<Token> ast_root = math_parser.parse_stream(std::move(out));
     math_parser.print_as_tree(ast_root.get());
-    ast_root->print(std::cout);
+
+    if (output_stream){
+        ast_root->print(*output_stream);
+    } else {
+        ast_root->print(std::cout);
+    }
 
     return 0;
 }
