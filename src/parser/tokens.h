@@ -134,6 +134,30 @@ public:
     }
 };
 
+class BrExprToken : public Token {
+private:
+    std::unique_ptr<Token> expr;
+public:
+    BrExprToken(std::string type, std::vector<std::unique_ptr<Token>> in) 
+    : Token(type)
+    {
+        assert(in.size() == 3);
+        assert(in[0]->type() == "BRO");
+        assert(in[1]->type() == "EXPR");
+        assert(in[2]->type() == "BRC");
+        expr = std::move(in[1]);
+    }
+    void print(std::ostream& stream) override {
+        stream << "( ";
+        expr->print(stream);
+        stream << " )";
+    }
+
+    std::vector<Token*> get() override { 
+        return std::vector<Token*>{expr.get()}; 
+    }
+};
+
 class SubExprToken : public Token {
 private:
     std::unique_ptr<Token> expr1;

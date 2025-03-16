@@ -34,6 +34,8 @@ int main(int argc, char* argv[]){
     math_lexer.addSequence("NUM", "[0-9]+(.[0-9]+)?");
     math_lexer.addSequence("VAR", "[a-zA-Z]+");
     math_lexer.addSequence("EQ", "=");
+    math_lexer.addSequence("BRO", "/(");
+    math_lexer.addSequence("BRC", "/)");
     math_lexer.addSequence("DIV", "//");
     math_lexer.addSequence("MUL", "/*");
     math_lexer.addSequence("SUB", "-");
@@ -54,6 +56,7 @@ int main(int argc, char* argv[]){
     math_parser.add_token("EXPR")
         .add_rule<NumericToken>("NUM")
         .add_rule<VariableToken>("VAR")
+        .add_rule<BrExprToken>("BRO EXPR BRC")
         .add_rule<MulExprToken>("EXPR EXPR")
         .add_rule<MulExprToken>("EXPR MUL EXPR")
         .add_rule<AddExprToken>("EXPR ADD EXPR")
@@ -62,7 +65,6 @@ int main(int argc, char* argv[]){
     // Actually do the parsing and lexing //
 
     std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence(input_sequence);
-    // std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence("2a + b + c = 21 \n a + b + c = 14 \n a + 4b - 2c = 23");
 
     for (auto& item : out){
         std::cout << item->type() << " ";
