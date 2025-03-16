@@ -256,7 +256,7 @@ private:
     std::unique_ptr<Token> equation_set2;
 public:
     EquationSet(std::string type, std::vector<std::unique_ptr<Token>> in) 
-    : Token(type)
+    : Token(type, "EQUATION_LINK")
     {
         if (in.size() == 1){
             assert(in[0]->type() == "EQUATION");
