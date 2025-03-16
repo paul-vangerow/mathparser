@@ -53,7 +53,7 @@ std::unique_ptr<Matcher::MatchLayer> Matcher::construct_new_layer(std::vector<st
     for (auto& item : current_tokens){
         new_tokens.emplace_back(new LexerToken(item));
     }
-    if (matched_token->type() != "UNIMPLEMENTED"){
+    if (matched_token->get_dtype() != "UNIMPLEMENTED"){
         new_tokens.push_back(std::move(matched_token));
     }
     return std::make_unique<MatchLayer>(this, original, std::move(new_tokens));

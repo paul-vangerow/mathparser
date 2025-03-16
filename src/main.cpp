@@ -67,12 +67,12 @@ int main(int argc, char* argv[]){
     std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence(input_sequence);
 
     for (auto& item : out){
-        std::cout << item->type() << " ";
+        std::cout << item->get_dtype() << " ";
     }
     std::cout << "\n";
 
     std::unique_ptr<Token> ast_root = math_parser.parse_stream(std::move(out));
-    math_parser.print_as_tree(ast_root.get());
+    math_parser.print_as_tree(ast_root);
 
     if (output_stream){
         ast_root->print(*output_stream);

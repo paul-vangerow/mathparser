@@ -11,9 +11,9 @@ void ParseStack::push(std::unique_ptr<Token>&& item){
 std::string ParseStack::peek_n(std::size_t n){
     std::string out = "";
     for (std::size_t i = size() - n; i < size() - 1; i++){
-        out += (stack[i]->type() + " ");
+        out += (stack[i]->get_dtype() + " ");
     }
-    out += stack.back()->type();
+    out += stack.back()->get_dtype();
     return out;
 }
 

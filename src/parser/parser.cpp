@@ -16,13 +16,13 @@ ParserExpression & Parser::add_token(std::string token_type){
 std::unique_ptr<Token> Parser::parse_stream(std::vector<std::unique_ptr<LexerToken>>&& token_stream){
     ParseStack stack;
     for (auto it = token_stream.begin(); it != token_stream.end(); ++it){
-        std::string type = (*it)->type();
+        std::string type = (*it)->get_dtype();
         stack.push(std::move(*it));
 
         // Peek type of next token
         std::string peek_next = "";
         if ( std::next(it) != token_stream.end() ){
-            peek_next = (*std::next(it))->type();
+            peek_next = (*std::next(it))->get_dtype();
         }
         
         bool reduce = true;
@@ -60,16 +60,16 @@ std::unique_ptr<Token> Parser::parse_stream(std::vector<std::unique_ptr<LexerTok
     return stack.get();
 }
 
-std::size_t Parser::get_max_depth(Token* root){
+std::size_t Parser::get_max_depth(std::unique_ptr<Token>& root){
     std::size_t max_depth = 0;
-    for (auto& item : root->get()){
+    for (auto& item : root->get_children()){
         max_depth = std::max(max_depth, get_max_depth(item));
     }
     return 1 + max_depth;
 }
 
-std::size_t Parser::navigate_layers(Token* root, std::size_t depth, std::size_t min_width, std::vector<std::string>& layer_strings){
-    std::string append = " " + root->simp_type() + " ";
+std::size_t Parser::navigate_layers(std::unique_ptr<Token>& root, std::size_t depth, std::size_t min_width, std::vector<std::string>& layer_strings){
+    std::string append = " " + root->get_stype() + " ";
 
     if (append.size() < min_width) {
         std::size_t initial_pad = min_width - append.size();
@@ -79,7 +79,7 @@ std::size_t Parser::navigate_layers(Token* root, std::size_t depth, std::size_t 
         append = ( std::string(l_pad, ' ') + append + std::string(r_pad, ' ') );
     }
 
-    auto connections = root->get();
+    auto& connections = root->get_children();
     if (connections.size() == 0){
         layer_strings[depth] += append;
 
@@ -106,7 +106,7 @@ std::size_t Parser::navigate_layers(Token* root, std::size_t depth, std::size_t 
     }
 }
 
-void Parser::print_as_tree(Token* root){
+void Parser::print_as_tree(std::unique_ptr<Token>& root){
     std::vector<std::string> layer_strings(get_max_depth(root));
     navigate_layers(root, 0, 0, layer_strings);
 
