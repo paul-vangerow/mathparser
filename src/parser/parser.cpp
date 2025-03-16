@@ -69,7 +69,7 @@ std::size_t Parser::get_max_depth(Token* root){
 }
 
 std::size_t Parser::navigate_layers(Token* root, std::size_t depth, std::size_t min_width, std::vector<std::string>& layer_strings){
-    std::string append = " " + root->type() + " ";
+    std::string append = " " + root->simp_type() + " ";
 
     if (append.size() < min_width) {
         std::size_t initial_pad = min_width - append.size();

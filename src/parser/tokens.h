@@ -10,24 +10,29 @@
 class Token {
 private:
     std::string dynamic_type;
+    std::string simplification_type;
 public:
     Token() = default;
-    Token(Token&& other) : dynamic_type(other.type()){};
+    Token(Token&& other) : dynamic_type(other.type()), simplification_type(other.simp_type()){};
     Token(std::string type) : dynamic_type(type) {}
+    Token(std::string type, std::string simp_type) : dynamic_type(type), simplification_type(simp_type) {}
     
     virtual ~Token() = default;
     void operator=(Token&& other){
         dynamic_type = other.type();
+        simplification_type = other.simp_type();
     }
 
     std::string type(){
         return dynamic_type;
     }
+    std::string simp_type(){
+        return simplification_type;
+    }
 
     virtual std::vector<Token*> get() { return std::vector<Token*>{}; }
     virtual void print(std::ostream& stream) {
-        std::cout << "base";
-        (void)stream;
+        stream << "base";
     }
 };
 
@@ -67,7 +72,7 @@ private:
     std::unique_ptr<Token> value;
 public:
     NumericToken(std::string type, std::vector<std::unique_ptr<Token>> in) 
-    : Token(type)
+    : Token(type, "NUMERIC")
     {
         assert(in.size() == 1);
         assert(in[0]->type() == "NUM");
@@ -90,7 +95,7 @@ private:
     std::unique_ptr<Token> value;
 public:
     VariableToken(std::string type, std::vector<std::unique_ptr<Token>> in) 
-    : Token(type)
+    : Token(type, "VARIABLE")
     {
         assert(in.size() == 1);
         assert(in[0]->type() == "VAR");
@@ -114,7 +119,7 @@ private:
     std::unique_ptr<Token> expr2;
 public:
     AddExprToken(std::string type, std::vector<std::unique_ptr<Token>> in) 
-    : Token(type)
+    : Token(type, "ADDITION")
     {
         assert(in.size() == 3);
         assert(in[0]->type() == "EXPR");
@@ -139,7 +144,7 @@ private:
     std::unique_ptr<Token> expr;
 public:
     BrExprToken(std::string type, std::vector<std::unique_ptr<Token>> in) 
-    : Token(type)
+    : Token(type, "BRACKETED")
     {
         assert(in.size() == 3);
         assert(in[0]->type() == "BRO");
@@ -164,7 +169,7 @@ private:
     std::unique_ptr<Token> expr2;
 public:
     SubExprToken(std::string type, std::vector<std::unique_ptr<Token>> in) 
-    : Token(type)
+    : Token(type, "SUBTRACTION")
     {
         assert(in.size() == 3);
         assert(in[0]->type() == "EXPR");
@@ -190,7 +195,7 @@ private:
     std::unique_ptr<Token> expr2;
 public:
     MulExprToken(std::string type, std::vector<std::unique_ptr<Token>> in) 
-    : Token(type)
+    : Token(type, "MULTIPLY")
     {
         if (in.size() == 2){
             assert(in[0]->type() == "EXPR");
@@ -224,7 +229,7 @@ private:
     std::unique_ptr<Token> expr2;
 public:
     EquationToken(std::string type, std::vector<std::unique_ptr<Token>> in) 
-    : Token(type)
+    : Token(type, "EQUATION")
     {
         assert(in.size() == 3);
         assert(in[0]->type() == "EXPR");
