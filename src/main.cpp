@@ -43,25 +43,6 @@ int main(int argc, char* argv[]){
     math_lexer.addSequence("EOL", "(\n)+");
     math_lexer.addSequence("UNIMPLEMENTED", " +");
 
-    Parser math_parser;
-
-    // Define Parser Grammar //
-    math_parser.add_token("EQUATION_SET")
-        .add_rule<EquationSet>("EQUATION_SET EOL EQUATION_SET")
-        .add_rule<EquationSet>("EQUATION");
-
-    math_parser.add_token("EQUATION")
-        .add_rule<EquationToken>("EXPR EQ EXPR");
-
-    math_parser.add_token("EXPR")
-        .add_rule<NumericToken>("NUM")
-        .add_rule<VariableToken>("VAR")
-        .add_rule<BrExprToken>("BRO EXPR BRC")
-        .add_rule<MulExprToken>("EXPR EXPR")
-        .add_rule<MulExprToken>("EXPR MUL EXPR")
-        .add_rule<AddExprToken>("EXPR ADD EXPR")
-        .add_rule<SubExprToken>("EXPR SUB EXPR");
-
     // Actually do the parsing and lexing //
 
     std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence(input_sequence);
@@ -70,15 +51,6 @@ int main(int argc, char* argv[]){
         std::cout << item->get_dtype() << " ";
     }
     std::cout << "\n";
-
-    std::unique_ptr<Token> ast_root = math_parser.parse_stream(std::move(out));
-    math_parser.print_as_tree(ast_root);
-
-    if (output_stream){
-        ast_root->print(*output_stream);
-    } else {
-        ast_root->print(std::cout);
-    }
 
     return 0;
 }
