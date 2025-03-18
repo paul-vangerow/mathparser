@@ -22,10 +22,8 @@ int main(int argc, char* argv[]){
     if (input_sequence.size() == 0) return 1;
 
     std::unique_ptr<std::ofstream> output_stream;;
-
     if (arg_parse["output_path"].size()){
         output_stream = arg_parse.get_output_stream(arg_parse["output_path"]);
-        if (output_stream == nullptr) return 1;
     }
 
     Lexer math_lexer;
@@ -46,11 +44,7 @@ int main(int argc, char* argv[]){
     // Actually do the parsing and lexing //
 
     std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence(input_sequence);
-
-    for (auto& item : out){
-        std::cout << item->get_dtype() << " ";
-    }
-    std::cout << "\n";
+    math_lexer.print_sequence(out);
 
     return 0;
 }

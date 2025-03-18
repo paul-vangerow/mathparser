@@ -10,15 +10,7 @@
 #include <stack>
 #include <memory>
 
-// ------------------------ Lexer ------------------------ //
-//                                                         //
-// An object representing a series of state machines for   //
-// a configurable set of regexes. Includes methods to      //
-// build the state machines as well as methods to navigate //
-// through them.                                           //
-//                                                         //
-// ------------------------------------------------------- //
-
+// An object for providing an API for all of the lexing logic
 class Lexer {
 private:
     // The set of ALL sequences in the Lexer.
@@ -27,20 +19,18 @@ public:
     Lexer() = default;
 
     // Method to construct a new sequence in place in m_sequences.
-    //
-    // token: The output token produced by the sequence's
-    //        completion.
-    // match: The regex the state machine is based on.
     void addSequence(std::string token, std::string match);
 
     // Method for matching the provided input sequence and getting
     // the resultant list of tokens.
-    //
-    // match_sequence: The input series of tokens to match using the
-    //         provided regexes.
-    //
-    // return: A vector of produced tokens after matching all input
-    //        tokens (The Lexing result).
     std::vector<std::unique_ptr<LexerToken>> match_sequence(std::string match_sequence);
+
+    // Helper function for printing a sequence of lexed tokens
+    static void print_sequence(std::vector<std::unique_ptr<LexerToken>>& values){
+        for (auto& item : values){
+            std::cout << item->get_dtype() << " ";
+        }
+        std::cout << "\n";
+    }
 };
 

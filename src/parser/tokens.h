@@ -52,8 +52,6 @@ class LexerToken : public Token{
 private:
     std::string m_content;
 public:
-    // LexerToken(LexerToken&& other) : Token(other.type()), m_content(other.content()) {}
-
     LexerToken() 
     : Token("UNIMPLEMENTED")
     , m_content("N/A"){}
@@ -78,3 +76,4 @@ public:
         stream << content();
     }
 };
+
