@@ -34,9 +34,9 @@ int main(int argc, char* argv[]){
     math_lexer.addSequence("EQ", "=");
     math_lexer.addSequence("BRO", "/(");
     math_lexer.addSequence("BRC", "/)");
-    math_lexer.addSequence("DIV", "//");
+    // math_lexer.addSequence("DIV", "//");
     math_lexer.addSequence("MUL", "/*");
-    math_lexer.addSequence("SUB", "-");
+    // math_lexer.addSequence("SUB", "-");
     math_lexer.addSequence("ADD", "/+");
     math_lexer.addSequence("EOL", "(\n)+");
     math_lexer.addSequence("UNIMPLEMENTED", " +");
@@ -45,6 +45,15 @@ int main(int argc, char* argv[]){
 
     std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence(input_sequence);
     math_lexer.print_sequence(out);
+
+    Parser math_parser;
+
+    math_parser.add_set("EQUATION_LINK").add_rule("EQUATION_LINK EOL EQUATION_LINK");
+    math_parser.add_set("EQUATION").add_rule("EXPR EQ EXPR");
+    math_parser.add_set("EXPR").add_rule("EXPR SUB EXPR")
+                               .add_rule("EXPR MUL EXPR")
+                               .add_rule("VAR")
+                               .add_rule("NUM");
 
     return 0;
 }
