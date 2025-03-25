@@ -48,12 +48,14 @@ int main(int argc, char* argv[]){
 
     Parser math_parser;
 
-    math_parser.add_set("EQUATION_LINK").add_rule("EQUATION_LINK EOL EQUATION_LINK");
-    math_parser.add_set("EQUATION").add_rule("EXPR EQ EXPR");
-    math_parser.add_set("EXPR").add_rule("EXPR SUB EXPR")
-                               .add_rule("EXPR MUL EXPR")
-                               .add_rule("VAR")
-                               .add_rule("NUM");
+    math_parser.add_set("EQUATION_LINK").add_rule<EquationLinkToken>("EQUATION_LINK EOL EQUATION_LINK")
+                                        .add_rule<EquationLinkToken>("EQUATION");
+    math_parser.add_set("EQUATION").add_rule<EquationToken>("EXPR EQ EXPR");
+    math_parser.add_set("EXPR").add_rule<AddToken>("EXPR ADD EXPR")
+                               .add_rule<MulToken>("EXPR EXPR")
+                               .add_rule<MulToken>("EXPR MUL EXPR")
+                               .add_rule<VarToken>("VAR")
+                               .add_rule<NumToken>("NUM");
 
     return 0;
 }
