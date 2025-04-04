@@ -3,7 +3,7 @@
 Matcher::MatchLayer::MatchLayer(
     Matcher * __parent__, 
     std::vector<LexerSequence> sequences, 
-    std::vector<std::unique_ptr<LexerToken>>&& tokens)
+    std::vector<std::unique_ptr<Token>>&& tokens)
 : parent(__parent__)
 , active_sequences(sequences)
 , current_tokens(std::move(tokens)){}
@@ -22,7 +22,7 @@ int Matcher::MatchLayer::match_token(char c){
         // Create a new layer (replace all existing layers) and destroy all subsequent sequences.
         if (res.is_end) {
             layer_created = true;
-            next = parent->construct_new_layer(current_tokens, std::make_unique<LexerToken>(seq_it->get_token(), active_content));
+            next = parent->construct_new_layer(current_tokens, Token::make_lexer_token(seq_it->get_token(), active_content));
             active_sequences.erase(std::next(seq_it), active_sequences.end());
         }
         // Destroy current sequence.
@@ -48,10 +48,10 @@ int Matcher::MatchLayer::match_token(char c){
     return active_sequences.size();
 }
 
-std::unique_ptr<Matcher::MatchLayer> Matcher::construct_new_layer(std::vector<std::unique_ptr<LexerToken>>& current_tokens, std::unique_ptr<LexerToken> matched_token){
-    std::vector<std::unique_ptr<LexerToken>> new_tokens;
+std::unique_ptr<Matcher::MatchLayer> Matcher::construct_new_layer(std::vector<std::unique_ptr<Token>>& current_tokens, std::unique_ptr<Token> matched_token){
+    std::vector<std::unique_ptr<Token>> new_tokens;
     for (auto& item : current_tokens){
-        new_tokens.emplace_back(new LexerToken(item));
+        new_tokens.push_back(Token::make_lexer_token(item));
     }
     if (matched_token->get_dtype() != "UNIMPLEMENTED"){
         new_tokens.push_back(std::move(matched_token));
@@ -60,8 +60,8 @@ std::unique_ptr<Matcher::MatchLayer> Matcher::construct_new_layer(std::vector<st
 }
 
 std::unique_ptr<Matcher::MatchLayer> Matcher::construct_new_layer(){
-    std::vector<std::unique_ptr<LexerToken>> empty_tokens;
-    std::unique_ptr<LexerToken> fill_token = std::make_unique<LexerToken>();
+    std::vector<std::unique_ptr<Token>> empty_tokens;
+    std::unique_ptr<Token> fill_token = Token::make_lexer_token();
     
     return construct_new_layer(empty_tokens, std::move(fill_token));
 }
@@ -85,7 +85,7 @@ void Matcher::match_token(char c){
     }
 }
 
-std::vector<std::unique_ptr<LexerToken>> Matcher::get_tokens(){
+std::vector<std::unique_ptr<Token>> Matcher::get_tokens(){
     if (top->next) return std::move(top->next->current_tokens);
     else return std::move(top->current_tokens);
 }

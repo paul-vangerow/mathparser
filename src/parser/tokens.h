@@ -13,18 +13,26 @@ private:
     std::string m_stype;
 protected:
     std::vector<std::unique_ptr<Token>> m_children;
+    std::string m_content;
 public:
     // Default constructor
     Token() = default;
     
-    Token(std::string dtype)
-    : m_dtype(dtype) 
-    {}
+    Token(std::string dtype) : m_dtype(dtype) {}
 
-    Token(std::string dtype, std::string stype) 
-    : m_dtype(dtype)
-    , m_stype(stype) 
-    {}
+    Token(std::string dtype, std::string stype) : m_dtype(dtype), m_stype(stype){}
+
+    Token(std::string dtype, std::string stype, std::string content) : m_dtype(dtype), m_stype(stype), m_content(content){}
+
+    static std::unique_ptr<Token> make_lexer_token(){
+        return std::make_unique<Token>("UNIMPLEMENTED", "UNIMPLEMENTED", "N/A");
+    }
+    static std::unique_ptr<Token> make_lexer_token(std::string type, std::string content){
+        return std::make_unique<Token>(type, type, content);
+    }
+    static std::unique_ptr<Token> make_lexer_token(std::unique_ptr<Token>& v){
+        return std::make_unique<Token>(v->get_dtype(), v->get_stype(), v->content());
+    }
     
     virtual ~Token() = default;
     void operator=(Token&& other){
@@ -38,41 +46,15 @@ public:
     std::string get_stype(){
         return m_stype;
     }
+    std::string content(){
+        return m_content;
+    }
 
     virtual std::vector<std::unique_ptr<Token>>& get_children(){ 
         return m_children; 
     }
 
     virtual void print(std::ostream& stream) {
-        stream << "base";
-    }
-};
-
-class LexerToken : public Token{
-private:
-    std::string m_content;
-public:
-    LexerToken() 
-    : Token("UNIMPLEMENTED")
-    , m_content("N/A"){}
-
-    LexerToken(std::string type, std::string content)
-    : Token(type)
-    , m_content(content){}
-
-    LexerToken(std::string type)
-    : Token(type)
-    , m_content("N/A") {}
-
-    LexerToken(std::unique_ptr<LexerToken>& v)
-    : Token(v->get_dtype())
-    , m_content(v->content()) {}
-
-    std::string content(){
-        return m_content;
-    }
-
-    void print(std::ostream& stream) override {
         stream << content();
     }
 };

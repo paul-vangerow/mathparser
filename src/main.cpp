@@ -43,7 +43,7 @@ int main(int argc, char* argv[]){
 
     // Actually do the parsing and lexing //
 
-    std::vector<std::unique_ptr<LexerToken>> out = math_lexer.match_sequence(input_sequence);
+    std::vector<std::unique_ptr<Token>> out = math_lexer.match_sequence(input_sequence);
     math_lexer.print_sequence(out);
 
     Parser math_parser;
@@ -56,6 +56,7 @@ int main(int argc, char* argv[]){
                                .add_rule<MulToken>("EXPR MUL EXPR")
                                .add_rule<VarToken>("VAR")
                                .add_rule<NumToken>("NUM");
+    math_parser.parse_token_subset(out);
 
     return 0;
 }

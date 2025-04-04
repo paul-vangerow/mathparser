@@ -23,10 +23,10 @@ public:
 
     // Method for matching the provided input sequence and getting
     // the resultant list of tokens.
-    std::vector<std::unique_ptr<LexerToken>> match_sequence(std::string match_sequence);
+    std::vector<std::unique_ptr<Token>> match_sequence(std::string match_sequence);
 
     // Helper function for printing a sequence of lexed tokens
-    static void print_sequence(std::vector<std::unique_ptr<LexerToken>>& values){
+    static void print_sequence(std::vector<std::unique_ptr<Token>>& values){
         for (auto& item : values){
             std::cout << item->get_dtype() << " ";
         }

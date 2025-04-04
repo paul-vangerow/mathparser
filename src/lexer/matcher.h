@@ -30,7 +30,7 @@ class Matcher {
 
         // A list of all already produced tokens for this 
         // match layer.
-        std::vector<std::unique_ptr<LexerToken>> current_tokens;
+        std::vector<std::unique_ptr<Token>> current_tokens;
 
         // The content for the currently being constructed 
         // Lexer Token.
@@ -40,7 +40,7 @@ class Matcher {
         // replace this if no sequences match anything)
         std::unique_ptr<MatchLayer> next;
 
-        MatchLayer(Matcher * __parent__, std::vector<LexerSequence> sequences, std::vector<std::unique_ptr<LexerToken>>&& tokens);
+        MatchLayer(Matcher * __parent__, std::vector<LexerSequence> sequences, std::vector<std::unique_ptr<Token>>&& tokens);
 
         // Progress all active state machines by the next
         // input token. Create or destroy match layers based
@@ -68,7 +68,7 @@ public:
     //
     // return: A unique ptr to a new match layer (to be attached to
     //         whichever layer made a call to this method)
-    std::unique_ptr<MatchLayer> construct_new_layer(std::vector<std::unique_ptr<LexerToken>>& current_tokens, std::unique_ptr<LexerToken> matched_token);
+    std::unique_ptr<MatchLayer> construct_new_layer(std::vector<std::unique_ptr<Token>>& current_tokens, std::unique_ptr<Token> matched_token);
 
     // Construct a new MatchLayer but with default parameters (no
     // current tokens and no matched_token). This is needed for
@@ -89,6 +89,6 @@ public:
     // After all tokens have been matched to extract the full set
     // of matched tokens from the topmost layer.
     //
-    // return: The full list of matched LexerTokens
-    std::vector<std::unique_ptr<LexerToken>> get_tokens();
+    // return: The full list of matched Tokens
+    std::vector<std::unique_ptr<Token>> get_tokens();
 };
