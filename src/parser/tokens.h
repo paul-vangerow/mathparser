@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <ostream>
+#include <cassert>
 
 // This file contains all the Token definitions to be
 // assembled into an AST by the parser.

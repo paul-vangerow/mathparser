@@ -3,7 +3,7 @@
 #include "parser/tokens.h"
 #include <span>
 
-using CreationFunction = std::function<std::unique_ptr<Token>&&(std::vector<std::unique_ptr<Token>>&&)>;
+using CreationFunction = std::function<std::unique_ptr<Token>(std::vector<std::unique_ptr<Token>>&&)>;
 
 struct ParseRule {
     std::string match_string;
@@ -28,10 +28,10 @@ public:
 
     template <typename T>
     ParserSet& add_rule(std::string match_string){
-        ParseRule new_rule(match_string, [dtype = match_string](std::vector<std::unique_ptr<Token>>&& in){
-                                                return std::unique_ptr<Token>(new T(dtype, std::move(in)));
-                                            });
-        m_rule_set.push_back(new_rule);
+        auto lambda = [dtype = m_token_type](std::vector<std::unique_ptr<Token>>&& in){
+            return std::unique_ptr<Token>(new T(dtype, std::move(in))); 
+        };
+        m_rule_set.emplace_back(match_string, lambda);
         return *this;
     }
 };
@@ -47,8 +47,39 @@ public:
         return new_set;
     }
 
-    std::unique_ptr<Token>&& parse_token_subset(std::vector<std::unique_ptr<Token>>& in){
-        return std::move(std::unique_ptr<Token>(new Token()));
+    void parse_token_subset(std::vector<std::unique_ptr<Token>>& in){
+        // Iterate over each rule
+        for (auto rule_it = m_rule_set.rbegin(); rule_it != m_rule_set.rend(); ++rule_it){
+            auto rule_match_string = rule_it->match_string;
+            auto rule_match_length = get_rule_length(rule_match_string);
+            auto rule_make_fn = rule_it->make_function; 
+
+            for (std::size_t input_it = 0; input_it + rule_match_length - 1 < in.size(); ++input_it){
+                std::string match_check;
+                for (std::size_t i = 0; i < rule_match_length; i++){
+                    std::cout << in.size() << " " << (input_it + i) << "\n";
+                    if (!in[input_it + i]){
+                        std::cout << "Nullptr access\n";
+                        continue; 
+                    }
+                    match_check += in[input_it + i]->get_dtype();
+                    if (i != rule_match_length-1) match_check += " ";
+                }
+                std::cout << match_check << "<< || >>" << rule_match_string << "\n";
+                if (match_check == rule_match_string){
+                    std::cout << "Matched!\n";
+                    std::vector<std::unique_ptr<Token>> convert;
+                    for (std::size_t i = 0; i < rule_match_length; i++){
+                        convert.push_back(std::move(in[input_it + i]));
+                    }
+                    auto new_token = rule_make_fn(std::move(convert));
+                    in[input_it] = std::move(new_token);
+                    if (rule_match_length > 1){
+                        in.erase(in.begin() + input_it + 1, in.begin() + input_it + rule_match_length);
+                    }
+                }
+            }
+        }
     }
 
     std::size_t get_rule_length(std::string match){

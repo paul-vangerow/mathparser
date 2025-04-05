@@ -6,6 +6,8 @@
 #include <vector>
 #include <iostream>
 
+#include <exception>
+
 int main(int argc, char* argv[]){
     // Get arguments
     ArgumentParser arg_parse;
@@ -28,7 +30,7 @@ int main(int argc, char* argv[]){
 
     Lexer math_lexer;
 
-    // Define Lexer Tokens //
+    // Define Lexer Tokens //a
     math_lexer.addSequence("NUM", "[0-9]+(.[0-9]+)?");
     math_lexer.addSequence("VAR", "[a-zA-Z]+");
     math_lexer.addSequence("EQ", "=");
