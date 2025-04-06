@@ -60,6 +60,8 @@ int main(int argc, char* argv[]){
                                .add_rule<NumToken>("NUM");
     auto root = math_parser.parse(std::move(out));
 
+    math_parser.print_as_tree(root);
+
     root->print(std::cout);
 
     return 0;

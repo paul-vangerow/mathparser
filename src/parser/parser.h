@@ -121,8 +121,11 @@ public:
                         modified = true;
                     }
                 }
+                if (modified) break;
             }
         }
+        for (auto& item : in) std::cout << item->get_dtype() << " ";
+        std::cout << "\n";
         assert(in.size() == 1);
         return std::move(in[0]);
     }
@@ -133,5 +136,60 @@ public:
             if (match[i] == ' ') count++;
         }
         return count;
+    }
+
+    std::size_t get_max_depth(std::unique_ptr<Token>& root){
+        std::size_t max_depth = 0;
+        for (auto& item : root->get_children()){
+            max_depth = std::max(max_depth, get_max_depth(item));
+        }
+        return 1 + max_depth;
+    }
+    
+    std::size_t navigate_layers(std::unique_ptr<Token>& root, std::size_t depth, std::size_t min_width, std::vector<std::string>& layer_strings){
+        std::string append = " " + root->get_stype() + " ";
+    
+        if (append.size() < min_width) {
+            std::size_t initial_pad = min_width - append.size();
+            std::size_t l_pad = initial_pad / 2;
+            std::size_t r_pad = initial_pad - l_pad;
+    
+            append = ( std::string(l_pad, ' ') + append + std::string(r_pad, ' ') );
+        }
+    
+        auto& connections = root->get_children();
+        if (connections.size() == 0){
+            layer_strings[depth] += append;
+    
+            std::string fill(append.size(), ' ');
+            for (std::size_t further = depth + 1; further < layer_strings.size(); further++){
+                layer_strings[further] += fill;
+            }
+            return append.size();
+        } else {
+            std::size_t width = 0;
+            for (auto& item : connections){
+                width += navigate_layers(item, depth + 1, append.size() / connections.size(), layer_strings );
+            }
+            std::size_t total_pad = width - append.size();
+    
+            std::size_t l_pad = total_pad / 2;
+            std::size_t r_pad = total_pad - l_pad;
+    
+            append = ( std::string(l_pad, ' ') + append + std::string(r_pad, ' ') );
+    
+            layer_strings[depth] += append;
+    
+            return append.size();
+        }
+    }
+    
+    void print_as_tree(std::unique_ptr<Token>& root){
+        std::vector<std::string> layer_strings(get_max_depth(root));
+        navigate_layers(root, 0, 0, layer_strings);
+    
+        for (auto layer : layer_strings){
+            std::cout << layer << "\n";
+        }
     }
 };
