@@ -47,7 +47,60 @@ public:
         return new_set;
     }
 
-    void parse_token_subset(std::vector<std::unique_ptr<Token>>& in){
+    bool check_rule(std::string target, std::size_t start_idx, std::size_t rule_length, std::vector<std::unique_ptr<Token>>& input_vector){
+        assert(start_idx + rule_length - 1 < input_vector.size());
+        
+        std::string match_check;
+        for (std::size_t i = 0; i < rule_length; i++){
+            if (!input_vector[start_idx + i]){
+                continue; 
+            }
+            match_check += input_vector[start_idx + i]->get_dtype();
+            if (i != rule_length-1) match_check += " ";
+        }
+        return (match_check == target);
+    }
+
+    std::unique_ptr<Token> collapse_token(std::size_t start_idx, std::size_t length, CreationFunction& fn, std::vector<std::unique_ptr<Token>>& input_vector){
+        std::vector<std::unique_ptr<Token>> convert;
+        for (std::size_t i = 0; i < length; i++){
+            convert.push_back(std::move(input_vector[start_idx + i]));
+        }
+        return fn(std::move(convert));
+    }
+
+    void reduce_list(std::size_t start_idx, std::size_t length, std::unique_ptr<Token> new_v, std::vector<std::unique_ptr<Token>>& input_vector){
+        input_vector[start_idx] = std::move(new_v);
+        if (length > 1){
+            input_vector.erase(input_vector.begin() + start_idx + 1, input_vector.begin() + start_idx + length);
+        }
+    }
+
+    std::unique_ptr<Token> parse(std::vector<std::unique_ptr<Token>>&& in){
+        std::stack<std::vector<std::unique_ptr<Token>>> bracket_stack;
+        
+        // Base stack
+        bracket_stack.push(std::vector<std::unique_ptr<Token>>{});
+
+        for (std::size_t i = 0; i < in.size(); i++){
+            if (in[i]->get_dtype() == "BRO") bracket_stack.push(std::vector<std::unique_ptr<Token>>{});
+            else if (in[i]->get_dtype() == "BRC") {
+                auto top_tokens = std::move(bracket_stack.top());
+                bracket_stack.pop();
+
+                bracket_stack.top().push_back(parse_token_subset(std::move(top_tokens)));
+            } else {
+                bracket_stack.top().push_back(std::move(in[i]));
+            }
+        }
+
+        auto top_tokens = std::move(bracket_stack.top());
+        bracket_stack.pop();
+
+        return parse_token_subset(std::move(top_tokens));
+    }
+
+    std::unique_ptr<Token> parse_token_subset(std::vector<std::unique_ptr<Token>>&& in){
         // Iterate over each rule
         bool modified = true;
         while (modified){
@@ -59,34 +112,19 @@ public:
 
                 // Iterate over all tokens
                 for (std::size_t input_it = 0; input_it + rule_match_length - 1 < in.size(); ++input_it){
-                    std::string match_check;
-                    // Get the match string of the indexed tokens
-                    for (std::size_t i = 0; i < rule_match_length; i++){
-                        if (!in[input_it + i]){
-                            continue; 
-                        }
-                        match_check += in[input_it + i]->get_dtype();
-                        if (i != rule_match_length-1) match_check += " ";
-                    }
+                    
                     // If the match string matches the rule, extract the tokens, build
                     // the new Token and erase the other tokens.
-                    if (match_check == rule_match_string){
-                        std::vector<std::unique_ptr<Token>> convert;
-                        for (std::size_t i = 0; i < rule_match_length; i++){
-                            convert.push_back(std::move(in[input_it + i]));
-                        }
-                        auto new_token = rule_make_fn(std::move(convert));
-                        in[input_it] = std::move(new_token);
-                        if (rule_match_length > 1){
-                            in.erase(in.begin() + input_it + 1, in.begin() + input_it + rule_match_length);
-                        }
+                    if (check_rule(rule_match_string, input_it, rule_match_length, in)){
+                        auto new_token = collapse_token(input_it, rule_match_length, rule_make_fn, in);
+                        reduce_list(input_it, rule_match_length, std::move(new_token), in);
                         modified = true;
                     }
                 }
             }
         }
-        std::cout << in.size() << "\n";
-        in[0]->print(std::cout);
+        assert(in.size() == 1);
+        return std::move(in[0]);
     }
 
     std::size_t get_rule_length(std::string match){

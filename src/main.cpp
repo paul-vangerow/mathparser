@@ -58,7 +58,9 @@ int main(int argc, char* argv[]){
                                .add_rule<MulToken>("EXPR MUL EXPR")
                                .add_rule<VarToken>("VAR")
                                .add_rule<NumToken>("NUM");
-    math_parser.parse_token_subset(out);
+    auto root = math_parser.parse(std::move(out));
+
+    root->print(std::cout);
 
     return 0;
 }
