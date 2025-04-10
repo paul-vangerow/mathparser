@@ -83,12 +83,16 @@ public:
         bracket_stack.push(std::vector<std::unique_ptr<Token>>{});
 
         for (std::size_t i = 0; i < in.size(); i++){
-            if (in[i]->get_dtype() == "BRO") bracket_stack.push(std::vector<std::unique_ptr<Token>>{});
+            if (in[i]->get_dtype() == "BRO") {
+                bracket_stack.push(std::vector<std::unique_ptr<Token>>{});
+            }
             else if (in[i]->get_dtype() == "BRC") {
                 auto top_tokens = std::move(bracket_stack.top());
                 bracket_stack.pop();
 
-                bracket_stack.top().push_back(parse_token_subset(std::move(top_tokens)));
+                auto expr = parse_token_subset(std::move(top_tokens));
+
+                bracket_stack.top().push_back(std::make_unique<BraToken>("EXPR", std::move(expr)));
             } else {
                 bracket_stack.top().push_back(std::move(in[i]));
             }

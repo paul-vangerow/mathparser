@@ -213,3 +213,22 @@ public:
         m_children[0]->print(stream);
     }
 };
+
+class BraToken : public Token {
+    public:
+        BraToken(
+            std::string type, 
+            std::unique_ptr<Token>&& in)
+        : Token(type, "BRA")
+        {
+            assert(in->get_dtype() == "EXPR");
+    
+            m_children.push_back(std::move(in));
+        }
+    
+        void print(std::ostream& stream) override {
+            stream << "(";
+            m_children[0]->print(stream);
+            stream << ")";
+        }
+    };
