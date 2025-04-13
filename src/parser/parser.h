@@ -124,8 +124,6 @@ public:
                 if (modified) break;
             }
         }
-        for (auto& item : in) std::cout << item->get_dtype() << " ";
-        std::cout << "\n";
         assert(in.size() == 1);
         return std::move(in[0]);
     }
